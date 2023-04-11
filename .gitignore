@@ -3,3 +3,7 @@ package-lock.json
 server/.pytest_cache/
 server/venv/
 venv/
+.DS_Store
+src/.DS_Store
+server/.DS_Store
+.idea/workspace.xml
