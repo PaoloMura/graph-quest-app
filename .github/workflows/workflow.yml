@@ -15,23 +15,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-      - name: Use Node.js 9.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 9.x
-      - name: Install dependencies
-        run: |
-          [ -f "package-lock.json" ] && rm package-lock.json
-          [ -d "node_modules/" ] && rm -r node_modules/
-          npm install
-      - name: Build React app
-        run: |
-          npm run build
-          [ -d "server/build/" ] && rm -r server/build/
-          mv build/ server/
-          cd server/
       - name: Build Docker image
-        run: docker build -t flask-container .
+        run: |
+          cd server/
+          docker build -t flask-container .
       - name: Login to DockerHub
         run: |
           echo "Authenticating docker.io"
