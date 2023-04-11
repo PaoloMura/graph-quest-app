@@ -67,14 +67,21 @@ you can use GitHub Actions to automatically deploy the application.
 ### Prerequisites:
 
 * GitHub account
-* Docker Hub account with auth token
 * AWS account with IAM access credentials and AWS CLI setup
 
 ### Set the following GitHub secrets in the repository:
 
-* DOCKER_AUTH_TOKEN
 * AWS_ACCESS_KEY_ID
 * AWS_SECRET_ACCESS_KEY
+
+### Build the React frontend locally and move to the server/ directory:
+
+```shell
+npm build
+mv build/ server/
+```
+
+### Push changes to the remote repository
 
 ### Create a container service in AWS Lightsail:
 
@@ -91,7 +98,13 @@ $ aws lightsail get-container-services
 ### Run the GitHub Action to build and deploy the app:
 
 1. Go to the GitHub repository in a web browser
-2. 
+2. Go to Actions > build_and_deploy_service
+3. Run the workflow
+
+On completion, check the URL included in the final JSON output on the GitHub Actions web page
+or run the `get-container-services` command from before in a local terminal.
+
+This URL is where the website will be hosted (it may take a few minutes to go live).
 
 ### Cleanup AWS Lightsail resources when done:
 
