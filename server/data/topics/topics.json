@@ -1,0 +1,166 @@
+{
+  "nwXqO": {
+    "name": "Walks",
+    "description": "This topic is about walks.",
+    "settings": {
+      "linear": true,
+      "feedback": "each"
+    },
+    "questions": [
+      {
+        "file": "euler.py",
+        "class": "EulerWalk"
+      },
+      {
+        "file": "euler.py",
+        "class": "EulerWalk"
+      },
+      {
+        "file": "euler.py",
+        "class": "EulerWalk"
+      },
+      {
+        "file": "euler.py",
+        "class": "EulerWalk"
+      }
+    ]
+  },
+  "gBh4P": {
+    "name": "Test",
+    "description": "This is for testing purposes.",
+    "settings": {
+      "feedback": "each",
+      "linear": false
+    },
+    "questions": [
+      {
+        "file": "questionnaire.py",
+        "class": "DFS"
+      }
+    ]
+  },
+  "5Qtkj": {
+    "name": "Test Graph Types",
+    "description": "This is a test for different graph visualisation support.",
+    "settings": {
+      "linear": false
+    },
+    "questions": [
+      {
+        "file": "test.py",
+        "class": "TestMatching"
+      },
+      {
+        "file": "test.py",
+        "class": "TestMultipleGraphs"
+      },
+      {
+        "file": "test.py",
+        "class": "TestWeighted"
+      },
+      {
+        "file": "test.py",
+        "class": "TestSelectVertex"
+      },
+      {
+        "file": "test.py",
+        "class": "TestDiGraph"
+      }
+    ]
+  },
+  "jXWtK": {
+    "name": "Test Labels",
+    "description": "",
+    "settings": {
+      "linear": true
+    },
+    "questions": [
+      {
+        "file": "test.py",
+        "class": "TestLabels"
+      }
+    ]
+  },
+  "KO5eQ": {
+    "name": "TestNav",
+    "description": "",
+    "settings": {
+      "linear": false,
+      "feedback": "each"
+    },
+    "questions": [
+      {
+        "file": "test.py",
+        "class": "TestVertexSet"
+      },
+      {
+        "file": "test.py",
+        "class": "TestVertexSet"
+      },
+      {
+        "file": "test.py",
+        "class": "TestVertexSet"
+      }
+    ]
+  },
+  "xaY2M": {
+    "name": "Questionnaire",
+    "description": "This is a questionnaire for preliminary testing purposes. It is designed to showcase a variety of supported question types and cover a broad range of the Algorithms II syllabus.",
+    "settings": {
+      "feedback": "each",
+      "linear": false
+    },
+    "questions": [
+      {
+        "file": "questionnaire.py",
+        "class": "MinSpanTree"
+      },
+      {
+        "file": "euler.py",
+        "class": "EulerWalk"
+      },
+      {
+        "file": "questionnaire.py",
+        "class": "DFS"
+      },
+      {
+        "file": "questionnaire.py",
+        "class": "Distance"
+      },
+      {
+        "file": "questionnaire.py",
+        "class": "VertexCover"
+      },
+      {
+        "file": "questionnaire.py",
+        "class": "MaximumMatching"
+      }
+    ]
+  },
+  "Te9ZE": {
+    "name": "Test MCQ",
+    "description": "For debugging multiple choice questions",
+    "settings": {
+      "feedback": "each",
+      "linear": false
+    },
+    "questions": [
+      {
+        "file": "test.py",
+        "class": "TestMCQ"
+      },
+      {
+        "file": "test.py",
+        "class": "TestMCQ2"
+      },
+      {
+        "file": "test.py",
+        "class": "TestMultipleGraphs"
+      },
+      {
+        "file": "questionnaire.py",
+        "class": "MinSpanTree"
+      }
+    ]
+  }
+}

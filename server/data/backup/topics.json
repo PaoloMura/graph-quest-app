@@ -1,0 +1,13 @@
+{
+  "4hf9r": {
+    "name": "Walks",
+    "description": "This topic is about walks.",
+    "settings": {},
+    "questions": [
+      {
+        "file": "euler.py",
+        "class": "EulerWalk"
+      }
+    ]
+  }
+}

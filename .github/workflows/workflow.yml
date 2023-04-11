@@ -1,0 +1,91 @@
+name: build_and_deploy_service
+
+on: [workflow_dispatch]
+
+env:
+  SERVICE_NAME: "flask-service"
+  DOCKER_USERNAME: "paolomura"
+
+jobs:
+  build-service:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Use Node.js 9.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 9.x
+      - name: Install dependencies
+        run: |
+          [ -f "package-lock.json" ] && rm package-lock.json
+          [ -d "node_modules/" ] && rm -r node_modules/
+          npm install
+      - name: Build React app
+        run: |
+          npm run build
+          [ -d "server/build/" ] && rm -r server/build/
+          mv build/ server/
+          cd server/
+      - name: Build Docker image
+        run: docker build -t flask-container .
+      - name: Login to DockerHub
+        run: |
+          echo "Authenticating docker.io"
+          echo ${{ secrets.DOCKER_AUTH_TOKEN }} | docker login --username=${{ env.DOCKER_USERNAME }} --password-stdin
+      - name: Push to DockerHub
+        run: |
+          docker push ${{ steps.vars.outputs.image }}
+          docker push ${{ steps.vars.outputs.latest }}
+
+    outputs:
+      image: ${{ steps.vars.outputs.image }}
+      latest: ${{ steps.vars.outputs.latest }}
+
+  deploy-service-production:
+    needs: [build-service]
+    runs-on: ubuntu-latest
+    steps:
+      - name: prereqs
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region $AWS_DEFAULT_REGION
+          aws configure set region $AWS_DEFAULT_REGION
+          cat ~/.aws/credentials
+      - name: Install essentials
+        run: |
+          aws --version
+
+          # install LightsailCTL Plugin (https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-install-software)
+          sudo apt-get update && sudo apt-get -y install curl jq
+          curl https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl -o /usr/local/bin/lightsailctl
+          chmod +x /usr/local/bin/lightsailctl
+      - name: Release to Amazon Lightsail
+        env:
+          CONTAINER_SERVICE_NAME: ${{ env.SERVICE_NAME }}
+        run: |
+          echo "Releasing to Amazon Lightsail"
+
+          docker info
+          echo ${{ secrets.DOCKER_AUTH_TOKEN }} | docker login --username=${{ env.DOCKER_USERNAME }} --password-stdin
+          docker pull ${{ needs.build-service.outputs.image }}
+
+          # upload the docker image for this pipeline
+          aws lightsail push-container-image \
+            --service-name $CONTAINER_SERVICE_NAME  \
+            --label ${{ env.SERVICE_NAME }}-latest  \
+            --image ${{ needs.build-service.outputs.image }}
+
+          # create a deployment with uploaded docker image
+          aws lightsail create-container-service-deployment \
+            --service-name $CONTAINER_SERVICE_NAME \
+            --containers file://containers.json \
+            --public-endpoint file://public-endpoint.json

@@ -1,0 +1,37 @@
+{
+  "QSelectPath": {
+    "autoungrabify": true,
+    "selectifyNodes": true,
+    "selectifyEdges": false,
+    "panning": false,
+    "boxSelection": false
+  },
+  "QVertexSet": {
+    "autoungrabify": true,
+    "selectifyNodes": true,
+    "selectifyEdges": false,
+    "panning": false,
+    "boxSelection": true
+  },
+  "QEdgeSet": {
+    "autoungrabify": true,
+    "selectifyNodes": false,
+    "selectifyEdges": true,
+    "panning": false,
+    "boxSelection": true
+  },
+  "QTextInput": {
+    "autoungrabify": true,
+    "selectifyNodes": false,
+    "selectifyEdges": false,
+    "panning": false,
+    "boxSelection": false
+  },
+  "QMultipleChoice": {
+    "autoungrabify": true,
+    "selectifyNodes": false,
+    "selectifyEdges": false,
+    "panning": false,
+    "boxSelection": false
+  }
+}

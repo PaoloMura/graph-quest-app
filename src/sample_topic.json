@@ -1,0 +1,12 @@
+{
+  "name": "Walks",
+  "attempts": 1,
+  "ordered": false,
+  "questions": [
+    {
+      "file": "euler_walk.py",
+      "question": "EulerWalk",
+      "count": 1
+    }
+  ]
+}

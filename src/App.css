@@ -1,0 +1,120 @@
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+#cy {
+    width: 100%;
+    height: 53vh;
+    margin: auto;
+    display: block;
+}
+
+.Graph-area {
+    margin: 20px 150px;
+    height: 60vh;
+    display: block;
+    border-style: solid;
+}
+
+.Home-box {
+    margin: 30vh auto;
+    padding: 35px;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 35px;
+    width: 550px;
+    max-width: 80vw;
+}
+
+#header {
+    padding: 20px 0;
+    background-color: #cccccc;
+    border-style: solid;
+    border-width: 0 0 3px;
+    position: initial;
+}
+
+#btn-logout {
+    position: absolute;
+    top: 30px;
+    margin-left: 15px;
+}
+
+.Login-box {
+    margin: 15vh auto;
+    padding: 35px;
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 35px;
+    width: 550px;
+    max-width: 80vw;
+}
+
+.Login-row {
+    width: 100%;
+    margin: 15px 0;
+}
+
+.Right-button-container {
+    position: relative;
+}
+
+.Right-button {
+    position: absolute;
+    right: 0;
+    margin-right: calc(var(--bs-gutter-x) * .5) !important;
+}
+
+td {
+    text-align: center;
+}
+
+.tab-unanswered {
+}
+
+.tab-correct {
+    background-color: #baedb5 !important;
+}
+
+.tab-incorrect {
+    background-color: #d4a7a7 !important;
+}
