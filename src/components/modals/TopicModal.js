@@ -190,7 +190,7 @@ export default function TopicModal ({
   }
 
   return (
-    <Modal show={showModal} onHide={closeModal} centered size='lg'>
+    <Modal show={showModal} onHide={closeModal} backdrop='static' centered size='lg'>
       <ModalHeader>
         <ModalTitle>
           {(topicCode !== '0') ? <h1>Edit Topic</h1> : <h1>New Topic</h1>}
@@ -249,6 +249,9 @@ export default function TopicModal ({
             </tbody>
           </Table>
           <Form.Group as={Row} controlId='formSubmit' className='mb-3'>
+            <Col className='d-grid gap-2'>
+              <Button variant='secondary' size='lg' onClick={closeModal}>Cancel</Button>
+            </Col>
             <Col className='d-grid gap-2'>
               <Button variant='primary' size='lg' type='submit'>Submit</Button>
             </Col>
