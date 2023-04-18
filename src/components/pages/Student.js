@@ -6,7 +6,7 @@ import Header from '../helpers/Header'
 import NotFound from '../helpers/NotFound'
 
 function Student () {
-  let { topic_code } = useParams()
+  const { topic_code } = useParams()
 
   const setInitialData = () => {
     return {

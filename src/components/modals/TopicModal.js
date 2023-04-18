@@ -23,10 +23,31 @@ export default function TopicModal ({
       description: '',
       settings: {
         linear: true,
+        random_order: false,
         feedback: 'none'
       },
       questions: []
     }
+  }
+
+  function setUpdatedData (newData) {
+    // The reason for configuring each setting and checking for undefined fields individually is a way for
+    // helping future compatibility. i.e., if a new setting is added in future versions, the existing forms will use
+    // the default for this setting.
+    setData({
+      name: (newData.name !== undefined) ? newData.name : '',
+      description: (newData.description !== undefined) ? newData.description : '',
+      settings: {
+        linear: (newData.settings.linear !== undefined) ? newData.settings.linear : true,
+        random_order: (newData.settings.random_order !== undefined) ? newData.settings.random_order : false,
+        feedback: (newData.settings.feedback !== undefined) ? newData.settings.feedback : 'none'
+      },
+      questions: (newData.questions !== undefined)
+        ? newData.questions.map((q, i) => {
+          return { file: q.file, class: q.class, index: i }
+        })
+        : []
+    })
   }
 
   function setInitialErr () {
@@ -55,12 +76,7 @@ export default function TopicModal ({
         const res = response.data
         res.access_token && setToken(res.access_token)
         // Set the retrieved content with an additional index for questions
-        setData({
-          ...res,
-          questions: res.questions.map((q, i) => {
-            return { file: q.file, class: q.class, index: i }
-          })
-        })
+        setUpdatedData(res)
       }).catch((error) => {
         if (error.response) {
           console.log(error.response)
@@ -132,6 +148,16 @@ export default function TopicModal ({
       settings: {
         ...data.settings,
         linear: !data.settings.linear
+      }
+    })
+  }
+
+  const setRandomOrder = () => {
+    setData({
+      ...data,
+      settings: {
+        ...data.settings,
+        random_order: !data.settings.random_order
       }
     })
   }
@@ -216,6 +242,12 @@ export default function TopicModal ({
             <Form.Label column sm={3}>Linear progression</Form.Label>
             <Col sm={9}>
               <Form.Check type='checkbox' checked={data.settings.linear} onChange={setLinear} />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Row} controlId='formRandomOrderSetting' className='mb-3'>
+            <Form.Label column sm={3}>Randomise order</Form.Label>
+            <Col sm={9}>
+              <Form.Check type='checkbox' checked={data.settings.random_order} onChange={setRandomOrder} />
             </Col>
           </Form.Group>
           <Form.Group as={Row} controlId='formFeedbackSetting' className='mb-3'>

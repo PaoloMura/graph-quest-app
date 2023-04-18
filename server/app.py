@@ -1,4 +1,5 @@
 import copy
+import random
 from pprint import pprint
 
 import converter
@@ -171,6 +172,9 @@ def access_topic_data(topic_code):
             result['questions'][i] = generate_question(q_file, q_class)
         except Exception as e:
             return f'Error trying to access question class "{q_file}:{q_class}": {e}', 404
+    if result['settings'].get('random_order', False):
+        print('shuffle')
+        random.shuffle(result['questions'])
     # pprint(result)
     return result
 
