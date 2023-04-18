@@ -14,7 +14,7 @@ function Text ({ text }) {
 function Link ({ text, myKey, onClick }) {
   return (
     <td>
-      <Button variant={'link'} onClick={(e) => onClick(myKey, e)}>
+      <Button variant='link' onClick={(e) => onClick(myKey, e)}>
         {text}
       </Button>
     </td>
@@ -25,7 +25,7 @@ function DeleteButton ({ item, onDelete }) {
   return (
     <td>
       <IconButton onClick={(e) => onDelete(item, e)}>
-        <DeleteIcon/>
+        <DeleteIcon />
       </IconButton>
     </td>
   )
@@ -35,7 +35,7 @@ function ShareButton ({ myKey, onShare }) {
   return (
     <td>
       <IconButton onClick={(e) => onShare(myKey, e)}>
-        <LinkIcon/>
+        <LinkIcon />
       </IconButton>
     </td>
   )
@@ -53,36 +53,26 @@ function DropDown ({ selected, choices, onChange, myKey }) {
   )
 }
 
-function TextInput ({ myKey, text, onChange }) {
-  return (
-    <td>
-      <Form.Control
-        placeholder="Class name"
-        value={text}
-        onChange={(e) => onChange(myKey, e)}/>
-    </td>
-  )
-}
-
 export default function TableRow ({
   myKey,
   text,
   link,
-  selectedChoice,
-  choices,
-  onChangeOption,
-  input,
-  onChangeInput,
+  selectedFile,
+  files,
+  onChangeFile,
+  selectedClass,
+  classes,
+  onChangeClass,
   share,
   onDelete
 }) {
   return (
     <tr>
-      {text && (link ? <Link text={text} myKey={myKey} onClick={link}/> : <Text text={text}/>)}
-      {choices && <DropDown selected={selectedChoice} choices={choices} onChange={onChangeOption} myKey={myKey}/>}
-      {input !== undefined && <TextInput myKey={myKey} text={input} onChange={onChangeInput}/>}
-      <DeleteButton item={myKey} onDelete={onDelete}/>
-      {share !== undefined && <ShareButton myKey={myKey} onShare={share}/>}
+      {text && (link ? <Link text={text} myKey={myKey} onClick={link} /> : <Text text={text} />)}
+      {files && <DropDown selected={selectedFile} choices={files} onChange={onChangeFile} myKey={myKey} />}
+      {classes && <DropDown selected={selectedClass} choices={classes} onChange={onChangeClass} myKey={myKey} />}
+      <DeleteButton item={myKey} onDelete={onDelete} />
+      {share !== undefined && <ShareButton myKey={myKey} onShare={share} />}
     </tr>
   )
 }

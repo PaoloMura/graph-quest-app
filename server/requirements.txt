@@ -13,7 +13,7 @@ Flask-JWT-Extended==4.4.4
 fonttools==4.39.3
 future==0.18.3
 gevent==22.10.2
-graphquest @ git+https://github.com/PaoloMura/graphquest/@27c1e051958e0750e65c5754c8974dc6e1dc6b35
+graphquest @ git+https://github.com/PaoloMura/graphquest/
 greenlet==2.0.2
 idna==3.4
 iniconfig==2.0.0

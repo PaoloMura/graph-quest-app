@@ -15,7 +15,7 @@ import Header from '../helpers/Header'
 function Teacher ({ token, removeToken, setToken }) {
   function setInitialContent () {
     return {
-      questions: [],
+      files: [],
       topics: []
     }
   }
@@ -45,7 +45,7 @@ function Teacher ({ token, removeToken, setToken }) {
       // Remove the file from our local list
       setContent({
         ...content,
-        questions: content.questions.filter(q => q !== delFile)
+        files: content.files.filter(f => f.file !== delFile)
       })
       setDelFile('')
     }).catch((error) => {
@@ -93,17 +93,20 @@ function Teacher ({ token, removeToken, setToken }) {
     let reason = ''
     if (file === undefined || file === null) reason = 'No file selected'
     else if (file.type !== 'text/x-python-script') reason = 'File type must be a Python script'
-    else if (content.questions.includes(file.name)) reason = 'File with this name already uploaded'
+    else if (content.files.some((f) => (f.file === file.name))) reason = 'File with this name already uploaded'
     // Return the result
-    let valid = reason === ''
+    const valid = reason === ''
     return { valid, reason }
   }
   const addFile = (filename) => {
     setContent({
       ...content,
-      questions: [
-        ...content.questions,
-        filename
+      files: [
+        ...content.files,
+        {
+          file: filename,
+          questions: []
+        }
       ]
     })
   }
@@ -116,7 +119,7 @@ function Teacher ({ token, removeToken, setToken }) {
   }
   const addTopic = (topicCode, topicName) => {
     // Either edit an existing topic
-    for (let topic of content.topics) {
+    for (const topic of content.topics) {
       if (topic.topic_code === topicCode) {
         topic.name = topicName
         return
@@ -145,7 +148,7 @@ function Teacher ({ token, removeToken, setToken }) {
       const res = response.data
       res.access_token && setToken(res.access_token)
       setContent(({
-        questions: res.questions,
+        files: res.files,
         topics: res.topics
       }))
     }).catch((error) => {
@@ -159,22 +162,22 @@ function Teacher ({ token, removeToken, setToken }) {
 
   return (
     <div>
-      <Header btnType="logout" removeToken={removeToken}/>
+      <Header btnType='logout' removeToken={removeToken} />
       <Container>
         <Row>
           <Col>
             <h2>Questions:</h2>
             <Table bordered hover>
               <tbody>
-              {content.questions.map((question) => (
-                <TableRow
-                  key={question}
-                  text={question}
-                  myKey={question}
-                  onDelete={handleOpenDelFile}
-                />
-              ))}
-              <BottomRow colSpan={2} onClick={handleOpenFileUpload}/>
+                {content.files.map((f) => (
+                  <TableRow
+                    key={f.file}
+                    text={f.file}
+                    myKey={f.file}
+                    onDelete={handleOpenDelFile}
+                  />
+                ))}
+                <BottomRow colSpan={2} onClick={handleOpenFileUpload} />
               </tbody>
             </Table>
           </Col>
@@ -182,24 +185,24 @@ function Teacher ({ token, removeToken, setToken }) {
             <h2>Topics:</h2>
             <Table bordered hover>
               <tbody>
-              {content.topics.map((topic) => (
-                <TableRow
-                  key={topic.topic_code}
-                  text={topic.name}
-                  link={handleSelectTopic}
-                  myKey={topic.topic_code}
-                  share={setSelectedCode}
-                  onDelete={handleOpenDelTopic}
-                />
-              ))}
-              <BottomRow colSpan={3} onClick={handleNewTopic}/>
+                {content.topics.map((topic) => (
+                  <TableRow
+                    key={topic.topic_code}
+                    text={topic.name}
+                    link={handleSelectTopic}
+                    myKey={topic.topic_code}
+                    share={setSelectedCode}
+                    onDelete={handleOpenDelTopic}
+                  />
+                ))}
+                <BottomRow colSpan={3} onClick={handleNewTopic} />
               </tbody>
             </Table>
           </Col>
         </Row>
       </Container>
-      <DeleteModal deleting={delFile} closeDelete={handleCloseDelFile} performDelete={handleDelFile}/>
-      <DeleteModal deleting={delTopic} closeDelete={handleCloseDelTopic} performDelete={handleDelTopic}/>
+      <DeleteModal deleting={delFile} closeDelete={handleCloseDelFile} performDelete={handleDelFile} />
+      <DeleteModal deleting={delTopic} closeDelete={handleCloseDelTopic} performDelete={handleDelTopic} />
       <FileUploadModal
         showModal={showFileUpload}
         closeModal={handleCloseFileUpload}
@@ -214,7 +217,7 @@ function Teacher ({ token, removeToken, setToken }) {
         token={token}
         setToken={setToken}
         topicCode={selectedTopic !== '' ? selectedTopic : '0'}
-        files={content.questions}
+        files={content.files}
         addTopic={addTopic}
       />
       <CodeModal

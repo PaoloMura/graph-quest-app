@@ -17,7 +17,6 @@ export default function TopicModal ({
   files,
   addTopic
 }) {
-
   function setInitialData () {
     return {
       name: '',
@@ -70,16 +69,16 @@ export default function TopicModal ({
         }
       })
     }
-    return () => {setData(setInitialData)}
+    return () => { setData(setInitialData) }
   }, [token, setToken, topicCode])
 
   const addQuestion = () => {
-    let index = data.questions.length > 0 ? data.questions.at(-1).index + 1 : 0
+    const index = data.questions.length > 0 ? data.questions.at(-1).index + 1 : 0
     setData({
       ...data,
       questions: [
         ...data.questions,
-        { file: files[0], class: '', index: index }
+        { file: files[0].file, class: files[0].questions[0], index }
       ]
     })
     setErr({ ...err, questions: '' })
@@ -111,7 +110,7 @@ export default function TopicModal ({
     setData({
       ...data,
       questions: data.questions.map(q => {
-        if (q.index === index) return { file: e.target.value, class: q.class, index: index }
+        if (q.index === index) return { file: e.target.value, class: q.class, index }
         else return q
       })
     })
@@ -121,7 +120,7 @@ export default function TopicModal ({
     setData({
       ...data,
       questions: data.questions.map(q => {
-        if (q.index === index) return { file: q.file, class: e.target.value, index: index }
+        if (q.index === index) return { file: q.file, class: e.target.value, index }
         else return q
       })
     })
@@ -163,7 +162,7 @@ export default function TopicModal ({
   const handleSubmit = async (event) => {
     event.preventDefault()
     if (!validateForm()) return
-    let newData = {
+    const newData = {
       ...data,
       questions: data.questions.map(q => ({ file: q.file, class: q.class }))
     }
@@ -191,7 +190,7 @@ export default function TopicModal ({
   }
 
   return (
-    <Modal show={showModal} onHide={closeModal} centered size="lg">
+    <Modal show={showModal} onHide={closeModal} centered size='lg'>
       <ModalHeader>
         <ModalTitle>
           {(topicCode !== '0') ? <h1>Edit Topic</h1> : <h1>New Topic</h1>}
@@ -199,33 +198,33 @@ export default function TopicModal ({
       </ModalHeader>
       <ModalBody>
         <Form onSubmit={handleSubmit}>
-          <Form.Group as={Row} controlId="formTitle" className="mb-3">
+          <Form.Group as={Row} controlId='formTitle' className='mb-3'>
             <Form.Label column sm={3}>Title</Form.Label>
             <Col sm={9}>
-              <Form.Control value={data.name} onChange={setName}/>
+              <Form.Control value={data.name} onChange={setName} />
             </Col>
             {err.name !== '' && <Form.Text muted>{err.name}</Form.Text>}
           </Form.Group>
-          <Form.Group as={Row} controlId="formDescription" className="mb-3">
+          <Form.Group as={Row} controlId='formDescription' className='mb-3'>
             <Form.Label column sm={3}>Description</Form.Label>
             <Col sm={9}>
-              <Form.Control as="textarea" rows={3} value={data.description} onChange={setDescription}/>
+              <Form.Control as='textarea' rows={3} value={data.description} onChange={setDescription} />
             </Col>
           </Form.Group>
           <h3>Settings</h3>
-          <Form.Group as={Row} controlId="formLinearSetting" className="mb-3">
+          <Form.Group as={Row} controlId='formLinearSetting' className='mb-3'>
             <Form.Label column sm={3}>Linear progression</Form.Label>
             <Col sm={9}>
-              <Form.Check type="checkbox" checked={data.settings.linear} onChange={setLinear}/>
+              <Form.Check type='checkbox' checked={data.settings.linear} onChange={setLinear} />
             </Col>
           </Form.Group>
-          <Form.Group as={Row} controlId="formFeedbackSetting" className="mb-3">
+          <Form.Group as={Row} controlId='formFeedbackSetting' className='mb-3'>
             <Form.Label column sm={3}>Feedback</Form.Label>
             <Col sm={9}>
               <Form.Select value={data.settings.feedback} onChange={setFeedback}>
-                <option value="none">None</option>
-                <option value="each">After each question</option>
-                <option value="end">At the end</option>
+                <option value='none'>None</option>
+                <option value='each'>After each question</option>
+                <option value='end'>At the end</option>
               </Form.Select>
             </Col>
           </Form.Group>
@@ -233,24 +232,25 @@ export default function TopicModal ({
           {err.questions !== '' && <Form.Text muted>{err.questions}</Form.Text>}
           <Table bordered hover>
             <tbody>
-            {data.questions.map((question, index) => (
-              <TableRow
-                key={question.index}
-                myKey={question.index}
-                selectedChoice={question.file}
-                choices={files}
-                onChangeOption={setFile}
-                input={question.class}
-                onChangeInput={setClass}
-                onDelete={removeQuestion}
-              />
-            ))}
-            <BottomRow colSpan={3} onClick={addQuestion}/>
+              {data.questions.map((question, index) => (
+                <TableRow
+                  key={question.index}
+                  myKey={question.index}
+                  selectedFile={question.file}
+                  files={files.map((f) => (f.file))}
+                  onChangeFile={setFile}
+                  selectedClass={question.class}
+                  classes={files.find(f => (f.file === question.file)).questions}
+                  onChangeClass={setClass}
+                  onDelete={removeQuestion}
+                />
+              ))}
+              <BottomRow colSpan={3} onClick={addQuestion} />
             </tbody>
           </Table>
-          <Form.Group as={Row} controlId="formSubmit" className="mb-3">
-            <Col className="d-grid gap-2">
-              <Button variant="primary" size="lg" type="submit">Submit</Button>
+          <Form.Group as={Row} controlId='formSubmit' className='mb-3'>
+            <Col className='d-grid gap-2'>
+              <Button variant='primary' size='lg' type='submit'>Submit</Button>
             </Col>
             {err.submit !== '' && <Form.Text muted>{err.submit}</Form.Text>}
           </Form.Group>

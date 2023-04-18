@@ -1,3 +1,9 @@
+import importlib
+import inspect
+from pprint import pprint
+
+from graphquest.question import Question
+
 from constants import *
 import json
 import os
@@ -61,3 +67,38 @@ def get_topic(topic_code: str):
             return data[topic_code], 201
     else:
         return {}, 404
+
+
+def load_module(file: str):
+    """Load the specified Python module dynamically"""
+    filepath = QUESTIONS_PATH + file.replace('.py', '')
+    filepath = filepath.replace('/', '.')
+    importlib.invalidate_caches()
+    try:
+        mod = importlib.import_module(filepath)
+        return mod
+    except ModuleNotFoundError as e:
+        raise e
+
+
+def get_questions(filename: str) -> [str]:
+    """Returns the question classes within the given file"""
+    mod = load_module(filename)
+
+    def is_class(x):
+        return inspect.isclass(x) and x.__module__ == mod.__name__
+
+    names = [name for name, _ in inspect.getmembers(mod, is_class)]
+
+    questions = []
+    for name in names:
+        cls = getattr(mod, name)
+        if issubclass(cls, Question):
+            questions.append(name)
+
+    return questions
+
+
+if __name__ == '__main__':
+    qs = get_questions('test.py')
+    pprint(qs)

@@ -4,6 +4,8 @@ import copy
 from graphquest.question import *
 import importlib
 
+from resources import load_module
+
 
 # Question Testing
 
@@ -16,11 +18,8 @@ def test_file():
 
 def load_question(file: str, qclass: str) -> Question:
     """Create an object from the specified file and Question class"""
-    filepath = QUESTIONS_PATH + file.replace('.py', '')
-    filepath = filepath.replace('/', '.')
-    importlib.invalidate_caches()
     try:
-        mod = importlib.import_module(filepath)
+        mod = load_module(file)
         try:
             cls = getattr(mod, qclass)
             obj = cls()

@@ -14,7 +14,7 @@ from flask_jwt_extended import (
     JWTManager)
 import json
 import os
-from resources import delete_topic, update_topic, get_topic
+from resources import delete_topic, update_topic, get_topic, get_questions
 from server import load_question, generate_question
 
 # Initial Setup
@@ -71,17 +71,25 @@ if env == 'development':
     def get_content():
         """Return a list of question files and topics"""
         try:
-            questions = list(filter(lambda x: x.endswith('.py'), os.listdir(QUESTIONS_PATH)))
+            filenames = list(filter(lambda x: x.endswith('.py'), os.listdir(QUESTIONS_PATH)))
+            files = []
+            for file in filenames:
+                files.append({
+                    "file": file,
+                    "questions": get_questions(file)
+                })
             with open(TOPICS_FILE, 'r') as f:
                 data = json.load(f)
                 topics = [{'topic_code': item, 'name': data[item]['name']} for item in data]
             content = {
-                'questions': questions,
+                'files': files,
                 'topics': topics
             }
             return content
         except FileNotFoundError:
             return 'File not found', 404
+        except ModuleNotFoundError:
+            return 'Module not found', 404
 
 
     @app.route('/api/teacher/questions/<file>', methods=['DELETE'])
