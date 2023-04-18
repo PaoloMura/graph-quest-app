@@ -229,13 +229,14 @@ export default function TopicModal ({
             <Col sm={9}>
               <Form.Control value={data.name} onChange={setName} />
             </Col>
-            {err.name !== '' && <Form.Text muted>{err.name}</Form.Text>}
+            {err.name !== '' && <Form.Text className='text-danger' muted={false}>{err.name}</Form.Text>}
           </Form.Group>
           <Form.Group as={Row} controlId='formDescription' className='mb-3'>
             <Form.Label column sm={3}>Description</Form.Label>
             <Col sm={9}>
               <Form.Control as='textarea' rows={3} value={data.description} onChange={setDescription} />
             </Col>
+            {err.description !== '' && <Form.Text className='text-danger' muted={false}>{err.description}</Form.Text>}
           </Form.Group>
           <h3>Settings</h3>
           <Form.Group as={Row} controlId='formLinearSetting' className='mb-3'>
@@ -260,8 +261,8 @@ export default function TopicModal ({
               </Form.Select>
             </Col>
           </Form.Group>
+          {err.settings !== '' && <Form.Text className='text-danger' muted={false}>{err.settings}</Form.Text>}
           <h3>Questions</h3>
-          {err.questions !== '' && <Form.Text muted>{err.questions}</Form.Text>}
           <Table bordered hover>
             <tbody>
               {data.questions.map((question, index) => (
@@ -280,6 +281,7 @@ export default function TopicModal ({
               <BottomRow colSpan={3} onClick={addQuestion} />
             </tbody>
           </Table>
+          {err.questions !== '' && <Form.Text className='text-danger' muted={false}>{err.questions}</Form.Text>}
           <Form.Group as={Row} controlId='formSubmit' className='mb-3'>
             <Col className='d-grid gap-2'>
               <Button variant='secondary' size='lg' onClick={closeModal}>Cancel</Button>
@@ -287,7 +289,7 @@ export default function TopicModal ({
             <Col className='d-grid gap-2'>
               <Button variant='primary' size='lg' type='submit'>Submit</Button>
             </Col>
-            {err.submit !== '' && <Form.Text muted>{err.submit}</Form.Text>}
+            {err.submit !== '' && <Form.Text className='text-danger' muted={false}>{err.submit}</Form.Text>}
           </Form.Group>
         </Form>
       </ModalBody>
