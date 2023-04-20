@@ -30,6 +30,27 @@ function Teacher ({ token, removeToken, setToken }) {
   const [selectedCode, setSelectedCode] = useState('0')
   const [error, setError] = useState('')
 
+  const getContent = () => {
+    axios({
+      method: 'GET',
+      url: '/api/teacher/content',
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    }).then((response) => {
+      const res = response.data
+      res.access_token && setToken(res.access_token)
+      setContent(({
+        files: res.files,
+        topics: res.topics
+      }))
+    }).catch((error) => {
+      if (error.response) {
+        console.log(error.response)
+      }
+    })
+  }
+
   const handleCloseError = () => {
     setError('')
   }
@@ -129,16 +150,7 @@ function Teacher ({ token, removeToken, setToken }) {
     return { valid, reason }
   }
   const addFile = (filename) => {
-    setContent({
-      ...content,
-      files: [
-        ...content.files,
-        {
-          file: filename,
-          questions: []
-        }
-      ]
-    })
+    getContent()
   }
 
   const handleSelectTopic = (topicCode) => setSelectedTopic(topicCode)
@@ -168,25 +180,8 @@ function Teacher ({ token, removeToken, setToken }) {
   const handleCloseCode = () => setSelectedCode('0')
 
   useEffect(() => {
-    axios({
-      method: 'GET',
-      url: '/api/teacher/content',
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
-    }).then((response) => {
-      const res = response.data
-      res.access_token && setToken(res.access_token)
-      setContent(({
-        files: res.files,
-        topics: res.topics
-      }))
-    }).catch((error) => {
-      if (error.response) {
-        console.log(error.response)
-      }
-    })
-  }, [token, setToken])
+    getContent()
+  }, [])
 
   return (
     <div>
