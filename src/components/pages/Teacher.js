@@ -206,7 +206,7 @@ function Teacher ({ token, removeToken, setToken }) {
                     onDelete={handleOpenDelFile}
                   />
                 ))}
-                <BottomRow colSpan={2} onClick={handleOpenFileUpload} />
+                <BottomRow colSpan={3} onClick={handleOpenFileUpload} />
               </tbody>
             </Table>
           </Col>
