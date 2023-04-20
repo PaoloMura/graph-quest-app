@@ -1,4 +1,6 @@
 import copy
+import sys
+
 import converter
 from constants import *
 from datetime import datetime, timedelta, timezone
@@ -114,13 +116,17 @@ if env == 'development':
         destination = QUESTIONS_PATH + filename
         if os.path.exists(destination):
             return 'File already exists', 400
-        file.save(destination)
-        result = test_new_file(filename)
-        if result is None:
-            return 'Success', 201
-        else:
-            os.remove(QUESTIONS_PATH + filename)
-            return result.args[0], 400
+        try:
+            file.save(destination)
+            error = test_new_file(filename)
+            if error is None:
+                return 'Success', 201
+            else:
+                os.remove(destination)
+                return error.args[0], 400
+        except Exception as e:
+            os.remove(destination)
+            return f'Failed validation: {e}', 400
 
 
     @app.route('/api/download/<file>', methods=['GET'])

@@ -32,8 +32,6 @@ function Student () {
       if (error.response) {
         setErr(true)
         console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
       }
     })
     return () => { setData(setInitialData) }

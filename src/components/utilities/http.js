@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 export function getSolution (question, answer, setProgress) {
-  console.log(answer)
   axios({
     method: 'POST',
     url: '/api/feedback/' + question.file + '/' + question.class,

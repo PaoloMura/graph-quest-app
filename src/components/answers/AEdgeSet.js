@@ -9,24 +9,24 @@ import SubmitButton from '../helpers/SubmitButton'
 
 export default function AEdgeSet ({ question, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (
-    progress['answer'] !== undefined ? progress['answer'] : []
+    progress.answer !== undefined ? progress.answer : []
   ))
 
   useEffect(() => {
-    if (progress['answer'] !== undefined) setAnswer(progress['answer'])
+    if (progress.answer !== undefined) setAnswer(progress.answer)
     else setAnswer([])
   }, [progress])
 
-  let controls = [
+  const controls = [
     'Click on an edge to select/unselect it.',
     'Click and drag to select/unselect multiple edges.'
   ]
-  if (question['settings']['selection_limit'] !== -1) {
+  if (question.settings.selection_limit !== -1) {
     controls.push(`You can select at most ${question.settings.selection_limit} edges`)
   }
 
   const handleReset = () => {
-    for (let [source, target] of answer) {
+    for (const [source, target] of answer) {
       triggerGraphAction(
         'highlightEdge',
         { v1: source, v2: target, highlight: false },
@@ -38,8 +38,8 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
 
   const equalNestedSets = (xs, ys) => {
     if (xs.size !== ys.size) return false
-    for (let x of xs) {
-      for (let y of ys) {
+    for (const x of xs) {
+      for (const y of ys) {
         if (equalSets(x, y)) return true
       }
     }
@@ -48,7 +48,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
 
   const answerInSolutions = () => {
     const ans = new Set(answer.map(edge => new Set(edge)))
-    for (let solution of question['solutions']) {
+    for (const solution of question.solutions) {
       const sol = new Set(solution.map(edge => new Set(edge)))
       if (equalNestedSets(sol, ans)) {
         return true
@@ -59,7 +59,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
 
   const handleSubmit = () => {
     // Determine whether the answer is correct
-    if (question['settings']['feedback']) {
+    if (question.settings.feedback) {
       getSolution(question, answer, onSubmit)
     } else if (answerInSolutions()) onSubmit(answer, 'correct', '')
     else onSubmit(answer, 'incorrect', '')
@@ -68,7 +68,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
   useEffect(() => {
     const edgeInAnswer = (edge, graphKey) => {
       const [u, v] = edge
-      for (let [x, y] of answer) {
+      for (const [x, y] of answer) {
         if (question.graphs[graphKey].directed) {
           if (u === x && v === y) return true
         } else {
@@ -80,7 +80,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
 
     const edgeInArray = (edge, array) => {
       const [u, v] = edge
-      for (let [x, y] of array) {
+      for (const [x, y] of array) {
         if (u === x && v === y) return true
       }
       return false
@@ -99,7 +99,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
     }
 
     function handleTapEdge (event) {
-      if (progress['status'] !== 'unanswered') return
+      if (progress.status !== 'unanswered') return
       const source = event.detail.source
       const target = event.detail.target
 
@@ -112,26 +112,36 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
         )
       } else {
         const limit = question.settings.selection_limit
-        if (limit === -1 || answer.length < limit) {
+        if (limit === -1 || limit === 1 || answer.length < limit) {
           setAnswer([...answer, [source, target]])
           triggerGraphAction(
             'highlightEdge',
             { v1: source, v2: target, highlight: true },
             event.detail.graphKey
           )
+          if (limit === 1 && answer.length === 1) {
+            triggerGraphAction(
+              'highlightEdge',
+              { v1: answer[0][0], v2: answer[0][1], highlight: false },
+              event.detail.graphKey
+            )
+            setAnswer([[source, target]])
+          } else {
+            setAnswer([...answer, [source, target]])
+          }
         }
       }
     }
 
     function handleBoxEnd (event) {
-      if (progress['status'] !== 'unanswered') return
+      if (progress.status !== 'unanswered') return
       const edges = event.detail.edges
       const numInAnswer = edges.reduce((acc, e) => {
         return edgeInAnswer(e, event.detail.graphKey) ? acc + 1 : acc
       }, 0)
       if (numInAnswer === edges.length) {
         // Un-highlight all and remove them from answer
-        for (let e of edges) {
+        for (const e of edges) {
           triggerGraphAction(
             'highlightEdge',
             { v1: e[0], v2: e[1], highlight: false },
@@ -144,7 +154,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
         const missing = edges.filter(e => !edgeInAnswer(e, event.detail.graphKey))
         if (question.settings.selection_limit === -1 ||
           answer.length + missing.length <= question.settings.selection_limit) {
-          for (let m of missing) {
+          for (const m of missing) {
             triggerGraphAction(
               'highlightEdge',
               { v1: m[0], v2: m[1], highlight: true },
@@ -164,10 +174,10 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
       document.removeEventListener('box_end', handleBoxEnd)
     }
   }, [answer, progress, question])
-  
+
   useEffect(() => {
-    if (progress['answer'] !== undefined && progress['answer'].length > 0) {
-      for (let [u, v] of progress['answer']) {
+    if (progress.answer !== undefined && progress.answer.length > 0) {
+      for (const [u, v] of progress.answer) {
         triggerGraphAction(
           'highlightEdge',
           { v1: u, v2: v, highlight: true },
@@ -182,46 +192,48 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
     return edges.join(',')
   }
 
-  if (progress['status'] === 'unanswered') return (
-    <div>
-      <Description
-        description={question['description']}
-        controls={controls}
-      />
-      <Form>
-        <Form.Control
-          disabled
-          readOnly
-          value={answerToString()}
+  if (progress.status === 'unanswered') {
+    return (
+      <div>
+        <Description
+          description={question.description}
+          controls={controls}
         />
-        <br/>
-        <Button variant="secondary" onClick={handleReset}>Reset</Button>
-        <br/>
-        <br/>
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus}/>
-      </Form>
-    </div>
-  )
-
-  else return (
-    <div>
-      <Description
-        description={question['description']}
-      />
-      <Form>
-        <Form.Control
-          disabled
-          readOnly
-          value={answerToString()}
+        <Form>
+          <Form.Control
+            disabled
+            readOnly
+            value={answerToString()}
+          />
+          <br />
+          <Button variant='secondary' onClick={handleReset}>Reset</Button>
+          <br />
+          <br />
+          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+        </Form>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <Description
+          description={question.description}
         />
-        <p>
-          {progress['status'] === 'correct' ? 'Correct!' : 'Incorrect.'}
-        </p>
-        <br/>
-        {progress['feedback']}
-        <br/>
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus}/>
-      </Form>
-    </div>
-  )
+        <Form>
+          <Form.Control
+            disabled
+            readOnly
+            value={answerToString()}
+          />
+          <p>
+            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
+          </p>
+          <br />
+          {progress.feedback}
+          <br />
+          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+        </Form>
+      </div>
+    )
+  }
 }
