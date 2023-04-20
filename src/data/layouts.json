@@ -1,26 +1,29 @@
 {
   "force-directed": {
     "name": "cola",
-    "animate": false,
-    "infinite": false,
+    "animate": true,
+    "infinite": true,
     "edgeLength": 100,
-    "centerGraph": false,
-    "padding": 70,
+    "centerGraph": true,
+    "padding": 40,
+    "fit": true,
+    "nodeSpacing": 5,
+    "avoidOverlap": true,
     "nodeDimensionsIncludeLabels": true
   },
   "circle": {
     "name": "circle",
-    "padding": 50,
+    "padding": 30,
     "nodeDimensionsIncludeLabels": true
   },
   "grid": {
     "name": "grid",
-    "padding": 50,
+    "padding": 30,
     "nodeDimensionsIncludeLabels": true
   },
   "bipartite": {
     "name": "grid",
-    "padding": 50,
+    "padding": 10,
     "nodeDimensionsIncludeLabels": true,
     "cols": 2
   }

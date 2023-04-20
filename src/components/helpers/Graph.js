@@ -209,15 +209,25 @@ function Graph ({ myKey, settings, user_settings, data }) {
       }
     }
 
+    function handleResize () {
+      const width = window.innerWidth
+      let padding
+      if (width < 768) padding = 150
+      else padding = 30
+      cy.fit({ padding })
+    }
+
     // Subscribe to action events
     document.addEventListener('highlightVertex', highlightVertex)
     document.addEventListener('highlightEdge', highlightEdge)
+    window.addEventListener('resize', handleResize)
 
     return () => {
       // Cleanup is very important
       cy.removeAllListeners()
       document.removeEventListener('highlightVertex', highlightVertex)
       document.removeEventListener('highlightEdge', highlightEdge)
+      window.removeEventListener('resize', handleResize)
     }
   }, [cy, data.directed, myKey, settings])
 

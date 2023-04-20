@@ -11,23 +11,22 @@ import settings from '../../data/settings.json'
 import AEdgeSet from '../answers/AEdgeSet'
 
 export default function Question ({ question, progress, onSubmit, onNext, submitStatus }) {
-
   const props = { question, progress, onSubmit, onNext, submitStatus }
 
   const answerComponents = {
-    'QSelectPath': <ASelectPath {...props}/>,
-    'QVertexSet': <AVertexSet {...props}/>,
-    'QTextInput': <ATextInput {...props}/>,
-    'QMultipleChoice': <AMultipleChoice {...props}/>,
-    'QEdgeSet': <AEdgeSet {...props}/>
+    QSelectPath: <ASelectPath {...props} />,
+    QVertexSet: <AVertexSet {...props} />,
+    QTextInput: <ATextInput {...props} />,
+    QMultipleChoice: <AMultipleChoice {...props} />,
+    QEdgeSet: <AEdgeSet {...props} />
   }
 
   return (
     <div>
       <Container>
         <Row>
-          <Col xs={7}>
-            <Row className="Graph-area">
+          <Col xs={12} md={7}>
+            <Row className='Graph-area'>
               {
                 question.graphs.map((graph, idx) => (
                   <Col key={idx}>
@@ -43,8 +42,8 @@ export default function Question ({ question, progress, onSubmit, onNext, submit
               }
             </Row>
           </Col>
-          <Col>
-            {answerComponents[question['type']]}
+          <Col className='answer-area'>
+            {answerComponents[question.type]}
           </Col>
         </Row>
       </Container>
