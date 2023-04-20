@@ -126,7 +126,7 @@ export default function TopicModal ({
     setData({
       ...data,
       questions: data.questions.map(q => {
-        if (q.index === index) return { file: e.target.value, class: q.class, index }
+        if (q.index === index) return { file: e.target.value, class: files[index].questions[0], index }
         else return q
       })
     })

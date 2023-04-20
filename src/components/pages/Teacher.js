@@ -11,6 +11,7 @@ import FileUploadModal from '../modals/FileUploadModal'
 import TopicModal from '../modals/TopicModal'
 import CodeModal from '../modals/CodeModal'
 import Header from '../helpers/Header'
+import ErrorModal from '../modals/ErrorModal'
 
 function Teacher ({ token, removeToken, setToken }) {
   function setInitialContent () {
@@ -27,6 +28,39 @@ function Teacher ({ token, removeToken, setToken }) {
   const [showTopic, setShowTopic] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState('')
   const [selectedCode, setSelectedCode] = useState('0')
+  const [error, setError] = useState('')
+
+  const handleCloseError = () => {
+    setError('')
+  }
+
+  const handleDownloadFile = (item) => {
+    // Download the file from the server
+    axios({
+      method: 'GET',
+      url: '/api/download/' + item,
+      headers: {
+        Authorization: 'Bearer ' + token
+      },
+      responseType: 'blob'
+    }).then((response) => {
+      // Update the access token if necessary
+      const res = response.data
+      res.access_token && setToken(res.access_token)
+      // Download the file
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', item)
+      document.body.appendChild(link)
+      link.click()
+    }).catch((error) => {
+      if (error.response) {
+        console.log(error.response)
+        setError(`Couldn't download file: ${error.response.status} - ${error.response.statusText}`)
+      }
+    })
+  }
 
   const handleOpenDelFile = (item) => setDelFile(item)
   const handleCloseDelFile = () => setDelFile('')
@@ -51,8 +85,6 @@ function Teacher ({ token, removeToken, setToken }) {
     }).catch((error) => {
       if (error.response) {
         console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
       }
     })
   }
@@ -80,8 +112,6 @@ function Teacher ({ token, removeToken, setToken }) {
     }).catch((error) => {
       if (error.response) {
         console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
       }
     })
   }
@@ -154,8 +184,6 @@ function Teacher ({ token, removeToken, setToken }) {
     }).catch((error) => {
       if (error.response) {
         console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.response.headers)
       }
     })
   }, [token, setToken])
@@ -174,6 +202,7 @@ function Teacher ({ token, removeToken, setToken }) {
                     key={f.file}
                     text={f.file}
                     myKey={f.file}
+                    onDownload={handleDownloadFile}
                     onDelete={handleOpenDelFile}
                   />
                 ))}
@@ -224,6 +253,11 @@ function Teacher ({ token, removeToken, setToken }) {
         showModal={selectedCode !== '0'}
         closeModal={handleCloseCode}
         topicCode={selectedCode}
+      />
+      <ErrorModal
+        showError={error !== ''}
+        onHideError={handleCloseError}
+        errorMessage={error}
       />
     </div>
   )

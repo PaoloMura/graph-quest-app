@@ -2,6 +2,7 @@ from constants import *
 import converter
 import copy
 from graphquest.question import *
+from graphquest.test_question import test_file
 import importlib
 
 from resources import load_module
@@ -9,9 +10,12 @@ from resources import load_module
 
 # Question Testing
 
-def test_file():
-    # TODO: verify whether a given question file contains valid classes
-    pass
+def test_new_file(file: str):
+    try:
+        test_file(filepath=QUESTIONS_PATH+file, verbose=False)
+        return None
+    except AssertionError as e:
+        return e
 
 
 # Question Generation

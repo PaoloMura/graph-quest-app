@@ -158,3 +158,45 @@ $ docker build -t flask-container .
 ```shell
 $ docker run -p 5000:5000 flask-container
 ```
+
+
+---
+
+## Updating the _graphquest_ package
+
+This section is for use by developers working on the GraphQuest project.
+
+### In the graphquest directory, do the following:
+
+1. Activate the virtual environment:
+
+```shell
+$ source env/bin/activate
+```
+
+2. Update the version in pyproject.toml
+3. Build the server:
+
+```shell
+$ python3 -m build
+```
+
+4. Push to the PyPi repository:
+
+```shell
+$ python3 -m twine upload --skip-existing --repository testpypi dist/*
+```
+
+### In the server directory, do the following:
+
+1. Activate the virtual environment:
+
+```shell
+$ source venv/bin/activate
+```
+
+2. Install the latest version of GraphQuest, replacing the version number:
+
+```shell
+$ pip install -i https://test.pypi.org/simple/ graphquest==1.0.2 
+```

@@ -1,5 +1,6 @@
 import React from 'react'
 import IconButton from '@mui/material/IconButton'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import DeleteIcon from '@mui/icons-material/Delete'
 import LinkIcon from '@mui/icons-material/Link'
 import Button from 'react-bootstrap/Button'
@@ -17,6 +18,16 @@ function Link ({ text, myKey, onClick }) {
       <Button variant='link' onClick={(e) => onClick(myKey, e)}>
         {text}
       </Button>
+    </td>
+  )
+}
+
+function DownloadButton ({ item, onDownload}) {
+  return (
+    <td>
+      <IconButton onClick={(e) => onDownload(item, e)}>
+        <FileDownloadIcon />
+      </IconButton>
     </td>
   )
 }
@@ -64,6 +75,7 @@ export default function TableRow ({
   classes,
   onChangeClass,
   share,
+  onDownload,
   onDelete
 }) {
   return (
@@ -71,6 +83,7 @@ export default function TableRow ({
       {text && (link ? <Link text={text} myKey={myKey} onClick={link} /> : <Text text={text} />)}
       {files && <DropDown selected={selectedFile} choices={files} onChange={onChangeFile} myKey={myKey} />}
       {classes && <DropDown selected={selectedClass} choices={classes} onChange={onChangeClass} myKey={myKey} />}
+      {onDownload !== undefined && <DownloadButton item={myKey} onDownload={onDownload} />}
       <DeleteButton item={myKey} onDelete={onDelete} />
       {share !== undefined && <ShareButton myKey={myKey} onShare={share} />}
     </tr>

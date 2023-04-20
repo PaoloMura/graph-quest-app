@@ -1,11 +1,8 @@
 import copy
-import random
-from pprint import pprint
-
 import converter
 from constants import *
 from datetime import datetime, timedelta, timezone
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, send_from_directory
 from flask_jwt_extended import (
     create_access_token,
     get_jwt,
@@ -15,8 +12,10 @@ from flask_jwt_extended import (
     JWTManager)
 import json
 import os
+from pprint import pprint
+import random
 from resources import delete_topic, update_topic, get_topic, get_questions
-from server import load_question, generate_question
+from server import load_question, generate_question, test_new_file
 
 # Initial Setup
 
@@ -116,7 +115,21 @@ if env == 'development':
         if os.path.exists(destination):
             return 'File already exists', 400
         file.save(destination)
-        return 'Success', 201
+        result = test_new_file(filename)
+        if result is None:
+            return 'Success', 201
+        else:
+            os.remove(QUESTIONS_PATH + filename)
+            return result.args[0], 400
+
+
+    @app.route('/api/download/<file>', methods=['GET'])
+    @jwt_required()
+    def download_file(file):
+        """Handle question file download"""
+        if '/' in file or '..' in file or len(file) < 4 or file[-3:] != '.py':
+            return 'Bad request: filename not valid', 400
+        return send_from_directory(QUESTIONS_PATH, file, mimetype='text/plain', as_attachment=True, download_name=file)
 
 
     @app.route('/api/teacher/topics/<topic_code>', methods=['GET', 'PUT', 'DELETE'])
