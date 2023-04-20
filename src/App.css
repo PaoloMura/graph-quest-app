@@ -1,3 +1,8 @@
+:root {
+    --correct-colour: #baedb5;
+    --incorrect-colour: #d4a7a7;
+}
+
 .App {
     text-align: center;
 }
@@ -112,9 +117,25 @@ td {
 }
 
 .tab-correct {
-    background-color: #baedb5 !important;
+    background-color: var(--correct-colour) !important;
 }
 
 .tab-incorrect {
-    background-color: #d4a7a7 !important;
+    background-color: var(--incorrect-colour) !important;
+}
+
+.text-correct {
+    text-align: center;
+    background-color: var(--correct-colour);
+    margin-top: 1rem;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.text-incorrect {
+    text-align: center;
+    background-color: var(--incorrect-colour);
+    margin-top: 1rem;
+    padding: 8px;
+    border-radius: 8px;
 }

@@ -80,12 +80,12 @@ export default function ATextInput ({ question, progress, onSubmit, onNext, subm
             readOnly
             value={answer}
           />
-          <p>
+          <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
             {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
           </p>
-          <br />
-          {progress.feedback}
-          <br />
+          <p>
+            {progress.feedback}
+          </p>
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
         </Form>
       </div>
