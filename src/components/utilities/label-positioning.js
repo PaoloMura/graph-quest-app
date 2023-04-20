@@ -105,12 +105,6 @@ export function setLabelPos (node) {
   // % 8 keeps it in range 0..7
   const zoneID = Math.floor((myAngle + (Math.PI / 8)) / (Math.PI / 4)) % 8
 
-  console.log('node:', node.data('id'))
-  console.log('angles:', angles)
-  console.log('gaps:', gaps)
-  console.log('myAngle:', myAngle)
-  console.log('zoneID:', zoneID)
-
   // 8. Finally, set the label to be in this zone.
   const zone = zones[zoneID]
   node.style('text-halign', zone.x)

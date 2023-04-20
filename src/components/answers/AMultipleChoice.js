@@ -6,13 +6,13 @@ import SubmitButton from '../helpers/SubmitButton'
 
 export default function AMultipleChoice ({ question, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => {
-    if (progress['answer'] !== undefined) return progress['answer']
-    else return question['solutions'].map((txt, _) => [txt, false])
+    if (progress.answer !== undefined) return progress.answer
+    else return question.solutions.map((txt, _) => [txt, false])
   })
 
   useEffect(() => {
-    if (progress['answer'] !== undefined) setAnswer(progress['answer'])
-    else setAnswer(question['solutions'].map((txt, _) => [txt, false]))
+    if (progress.answer !== undefined) setAnswer(progress.answer)
+    else setAnswer(question.solutions.map((txt, _) => [txt, false]))
   }, [progress, question])
 
   const handleSubmit = () => {
@@ -20,8 +20,8 @@ export default function AMultipleChoice ({ question, progress, onSubmit, onNext,
     if (question.settings.feedback) {
       getSolution(question, answer, onSubmit)
     } else {
-      for (let i = 0; i < question['solutions'].length; i++) {
-        if (question['solutions'][i][1] !== answer[i][1]) {
+      for (let i = 0; i < question.solutions.length; i++) {
+        if (question.solutions[i][1] !== answer[i][1]) {
           onSubmit(answer, 'incorrect', '')
           return
         }
@@ -40,13 +40,14 @@ export default function AMultipleChoice ({ question, progress, onSubmit, onNext,
     }))
   }
 
-  if (progress['status'] === 'unanswered') return (
-    <div>
-      <Description
-        description={question['description']}
-      />
-      <Form>
-        {
+  if (progress.status === 'unanswered') {
+    return (
+      <div>
+        <Description
+          description={question.description}
+        />
+        <Form>
+          {
           answer.map((ans, idx) => {
             return (
               <Form.Check
@@ -59,38 +60,39 @@ export default function AMultipleChoice ({ question, progress, onSubmit, onNext,
             )
           })
         }
-        <br/>
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus}/>
-      </Form>
-    </div>
-  )
-
-  else return (
-    <div>
-      <Description description={question.description}/>
-      <Form>
-        {
+          <br />
+          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+        </Form>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <Description description={question.description} />
+        <Form>
+          {
           answer.map(ans => {
             return (
               <Form.Check
                 key={ans[0]}
                 disabled
                 readOnly
-                type={question['settings']['single_selection'] ? 'radio' : 'checkbox'}
+                type={question.settings.single_selection ? 'radio' : 'checkbox'}
                 label={ans[0]}
                 checked={ans[1]}
               />
             )
           })
         }
-        <p>
-          {progress['status'] === 'correct' ? 'Correct!' : 'Incorrect.'}
-        </p>
-        <br/>
-        {progress['feedback']}
-        <br/>
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus}/>
-      </Form>
-    </div>
-  )
+          <p>
+            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
+          </p>
+          <br />
+          {progress.feedback}
+          <br />
+          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+        </Form>
+      </div>
+    )
+  }
 }

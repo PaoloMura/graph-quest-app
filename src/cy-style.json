@@ -74,5 +74,11 @@
       "width": 25,
       "height": 25
     }
+  },
+  {
+    "selector": "node:active",
+    "style": {
+      "overlay-shape": "ellipse"
+    }
   }
 ]

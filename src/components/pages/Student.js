@@ -10,10 +10,10 @@ function Student () {
 
   const setInitialData = () => {
     return {
-      'name': '',
-      'description': '',
-      'settings': {},
-      'questions': []
+      name: '',
+      description: '',
+      settings: {},
+      questions: []
     }
   }
 
@@ -23,7 +23,7 @@ function Student () {
   useEffect(() => {
     axios({
       method: 'GET',
-      url: '/api/student/topics/' + topic_code,
+      url: '/api/student/topics/' + topic_code
     }).then((response) => {
       const res = response.data
       setData(res)
@@ -36,16 +36,17 @@ function Student () {
         console.log(error.response.headers)
       }
     })
-    return () => {setData(setInitialData)}
+    return () => { setData(setInitialData) }
   }, [topic_code])
 
   return (
     <div>
-      <Header btnType="back" backPath="/student/portal"/>
-      <div className={'GraphArea'}>
+      <Header btnType='back' backPath='/student/portal' />
+      <div className='GraphArea'>
         {
-          err ? <NotFound/> :
-            <ProgressRow topicName={data['name']} settings={data['settings']} questions={data['questions']}/>
+          err
+            ? <NotFound />
+            : <ProgressRow topicName={data.name} settings={data.settings} questions={data.questions} />
         }
       </div>
     </div>

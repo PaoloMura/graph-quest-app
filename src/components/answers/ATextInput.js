@@ -6,17 +6,17 @@ import SubmitButton from '../helpers/SubmitButton'
 
 export default function ATextInput ({ question, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (
-    progress['answer'] !== undefined ? progress['answer'] : ''
+    progress.answer !== undefined ? progress.answer : ''
   ))
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (progress['answer'] !== undefined) setAnswer(progress['answer'])
+    if (progress.answer !== undefined) setAnswer(progress.answer)
     else setAnswer('')
   }, [progress])
 
   const validateAnswer = () => {
-    if (question['settings']['data_type'] === 'integer') {
+    if (question.settings.data_type === 'integer') {
       const parsed = Number(answer)
       if (isNaN(parsed)) {
         setError('Answer must be an integer')
@@ -35,11 +35,11 @@ export default function ATextInput ({ question, progress, onSubmit, onNext, subm
     // Validate the answer format
     if (!validateAnswer()) return
     // Determine whether the answer is correct
-    let ans = answer.toString()
-    if (question['settings']['feedback']) {
+    const ans = answer.toString()
+    if (question.settings.feedback) {
       getSolution(question, answer, onSubmit)
     } else {
-      for (let sol of question['solutions']) {
+      for (const sol of question.solutions) {
         if (sol.toString() === ans) {
           onSubmit(answer, 'correct', '')
           return
@@ -54,39 +54,41 @@ export default function ATextInput ({ question, progress, onSubmit, onNext, subm
     setError('')
   }
 
-  if (progress['status'] === 'unanswered') return (
-    <div>
-      <Description description={question['description']}/>
-      <Form>
-        <Form.Control
-          value={answer}
-          onChange={handleChangeAnswer}
-        />
-        <br/>
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus}/>
-        <br/>
-        {error !== '' && <Form.Text muted>{error}</Form.Text>}
-      </Form>
-    </div>
-  )
-
-  else return (
-    <div>
-      <Description description={question['description']}/>
-      <Form>
-        <Form.Control
-          disabled
-          readOnly
-          value={answer}
-        />
-        <p>
-          {progress['status'] === 'correct' ? 'Correct!' : 'Incorrect.'}
-        </p>
-        <br/>
-        {progress['feedback']}
-        <br/>
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus}/>
-      </Form>
-    </div>
-  )
+  if (progress.status === 'unanswered') {
+    return (
+      <div>
+        <Description description={question.description} />
+        <Form>
+          <Form.Control
+            value={answer}
+            onChange={handleChangeAnswer}
+          />
+          <br />
+          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+          <br />
+          {error !== '' && <Form.Text muted>{error}</Form.Text>}
+        </Form>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <Description description={question.description} />
+        <Form>
+          <Form.Control
+            disabled
+            readOnly
+            value={answer}
+          />
+          <p>
+            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
+          </p>
+          <br />
+          {progress.feedback}
+          <br />
+          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+        </Form>
+      </div>
+    )
+  }
 }

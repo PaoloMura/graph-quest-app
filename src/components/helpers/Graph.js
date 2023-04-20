@@ -22,7 +22,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
       layoutOptions = {
         ...layouts[user_settings.layout],
         position: (node) => {
-          return { 'col': node.data('bipartite') }
+          return { col: node.data('bipartite') }
         }
       }
     } else {
@@ -32,11 +32,11 @@ function Graph ({ myKey, settings, user_settings, data }) {
 
   function initialiseLabels () {
     const n_nodes = cy.nodes().length
-    for (let node of cy.nodes()) {
+    for (const node of cy.nodes()) {
       // Add a label to the node
       const label = user_settings.node_prefix + node.data('id')
       node.data('label', label)
-      if (user_settings['label_style'] === 'math') {
+      if (user_settings.label_style === 'math') {
         node.addClass('styled-label')
       }
       // Position the node according to the graph layout
@@ -61,7 +61,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
     }
     if (data.directed) edgeClasses.push('directed')
     edgeClasses = edgeClasses.join(' ')
-    for (let edge of cy.edges()) {
+    for (const edge of cy.edges()) {
       edge.addClass(edgeClasses)
     }
   }
@@ -75,10 +75,10 @@ function Graph ({ myKey, settings, user_settings, data }) {
 
     // console.log(data['elements']['nodes'][0]['data'])
 
-    if (data['elements']['nodes'].length > 0 &&
-      'x' in data['elements']['nodes'][0]['data'] &&
-      'y' in data['elements']['nodes'][0]['data']) {
-      for (let node of cy.nodes()) {
+    if (data.elements.nodes.length > 0 &&
+      'x' in data.elements.nodes[0].data &&
+      'y' in data.elements.nodes[0].data) {
+      for (const node of cy.nodes()) {
         node.position('x', node.data('x'))
         node.position('y', node.data('y'))
       }
@@ -86,12 +86,24 @@ function Graph ({ myKey, settings, user_settings, data }) {
 
     const layout = cy.layout(layoutOptions)
     layout.start()
+
     // Apply interactive settings.
-    cy.autoungrabify(settings.autoungrabify)
-    cy.userPanningEnabled(settings['panning'])
-    cy.boxSelectionEnabled(settings['boxSelection'])
-    settings['selectifyNodes'] ? cy.nodes()?.selectify() : cy.nodes()?.unselectify()
-    settings['selectifyEdges'] ? cy.edges()?.selectify() : cy.edges()?.unselectify()
+    cy.autoungrabify(true)
+    cy.userPanningEnabled(false)
+    cy.boxSelectionEnabled(settings.boxSelection)
+    settings.selectNodes ? cy.nodes()?.selectify() : cy.nodes()?.unselectify()
+    settings.selectEdges ? cy.edges()?.selectify() : cy.edges()?.unselectify()
+    const eoo = settings.selectEdges ? 0.2 : 0
+    const noo = settings.selectNodes ? 0.2 : 0
+    cy.style()
+      .selector('edge:active')
+      .style({ 'overlay-opacity': eoo })
+      .selector('node:active')
+      .style({ 'overlay-opacity': noo })
+      .selector('core')
+      .style({ 'active-bg-size': 0 })
+      .update()
+
     // Apply styling to nodes and edges.
     initialiseLabels()
     setEdgeClasses()
@@ -116,22 +128,22 @@ function Graph ({ myKey, settings, user_settings, data }) {
     cy.on('tap', (event) => {
       if (event.target === cy) {
         const params = {
-          'x': event.position.x,
-          'y': event.position.y
+          x: event.position.x,
+          y: event.position.y
         }
         triggerGraphEvent('tap_bg', params, myKey)
       }
     })
 
     cy.on('tap', 'node', (event) => {
-      const params = { 'vertex': event.target.data('value') }
+      const params = { vertex: event.target.data('value') }
       triggerGraphEvent('tap_node', params, myKey)
     })
 
     cy.on('tap', 'edge', (event) => {
       const params = {
-        'source': parseSource(event.target),
-        'target': parseTarget(event.target)
+        source: parseSource(event.target),
+        target: parseTarget(event.target)
       }
       triggerGraphEvent('tap_edge', params, myKey)
     })
@@ -139,22 +151,22 @@ function Graph ({ myKey, settings, user_settings, data }) {
     cy.on('cxttap', (event) => {
       if (event.target === cy) {
         const params = {
-          'x': event.position.x,
-          'y': event.position.y
+          x: event.position.x,
+          y: event.position.y
         }
         triggerGraphEvent('cxttap_bg', params, myKey)
       }
     })
 
     cy.on('cxttap', 'node', (event) => {
-      const params = { 'vertex': event.target.data('value') }
+      const params = { vertex: event.target.data('value') }
       triggerGraphEvent('cxttap_node', params, myKey)
     })
 
     cy.on('cxttap', 'edge', (event) => {
       const params = {
-        'source': parseSource(event.target),
-        'target': parseTarget(event.target)
+        source: parseSource(event.target),
+        target: parseTarget(event.target)
       }
       triggerGraphEvent('cxttap_edge', params, myKey)
     })
@@ -165,8 +177,8 @@ function Graph ({ myKey, settings, user_settings, data }) {
       selectedNodes.unselect()
       selectedEdges.unselect()
       const params = {
-        'nodes': selectedNodes.map(n => n.data('value')),
-        'edges': selectedEdges.map(e => parseEdge(e))
+        nodes: selectedNodes.map(n => n.data('value')),
+        edges: selectedEdges.map(e => parseEdge(e))
       }
       triggerGraphEvent('box_end', params, myKey)
     }
@@ -178,7 +190,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
 
     function highlightVertex (event) {
       if (event.detail.graphKey !== myKey) return
-      let vertex = cy.nodes('[id = "' + event.detail.vertex + '"]')[0]
+      const vertex = cy.nodes('[id = "' + event.detail.vertex + '"]')[0]
       if (event.detail.highlight) vertex.addClass('highlight')
       else vertex.removeClass('highlight')
     }
@@ -212,7 +224,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
   return (
     <>
       <CytoscapeComponent
-        id={'cy'}
+        id='cy'
         layout={layoutOptions}
         stylesheet={cyStyle}
         cy={(c) => {

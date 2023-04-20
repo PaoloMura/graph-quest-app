@@ -343,7 +343,7 @@ class MaximumMatching(QTextInput):
         for u, v in sol.items():
             edge = (u, v) if u < v else (v, u)
             matching.add(edge)
-        return f'A possible maximal matching is {matching}.'
+        return False, f'A possible maximal matching is {matching}.'
 
 
 if __name__ == '__main__':

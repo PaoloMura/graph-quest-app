@@ -1,13 +1,14 @@
 import axios from 'axios'
 
 export function getSolution (question, answer, setProgress) {
+  console.log(answer)
   axios({
     method: 'POST',
-    url: '/api/feedback/' + question['file'] + '/' + question['class'],
+    url: '/api/feedback/' + question.file + '/' + question.class,
     data: {
-      answer: answer,
-      graphs: question['graphs'],
-      data: question['settings']['data']
+      answer,
+      graphs: question.graphs,
+      data: question.settings.data
     }
   }).then((response) => {
     const res = response.data
@@ -16,8 +17,6 @@ export function getSolution (question, answer, setProgress) {
   }).catch((error) => {
     if (error.response) {
       console.log(error.response)
-      console.log(error.response.status)
-      console.log(error.headers)
     }
   })
 }

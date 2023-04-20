@@ -198,19 +198,25 @@ def get_feedback(q_file, q_class):
     try:
         # Load the question
         q = load_question(q_file, q_class)
+    except Exception as e:
+        return f"Error trying to load the question: {e}", 404
 
+    try:
         # Parse the request JSON
         answer = request.json.get('answer')
         graphs_json = request.json.get('graphs')
         graphs = [converter.cy2nx(g) for g in graphs_json]
         data = request.json.get('data')
         q.data = data
+    except Exception as e:
+        return f"Error trying to parse the data: {e}", 404
 
+    try:
         # Generate the feedback
         result, feedback = q.generate_feedback(copy.deepcopy(graphs), copy.deepcopy(answer))
         return {'result': result, 'feedback': feedback}
     except Exception as e:
-        return f'Error trying to access question class "{q_file}:{q_class}": {e}', 404
+        return f'Error trying to generate feedback: {e}', 404
 
 
 if __name__ == '__main__':
