@@ -62,7 +62,7 @@ h1.logo {
     height: 60vh;
     margin: auto;
     display: block;
-    border-style: solid;
+    /*border-style: solid;*/
 }
 
 .topic-area {
@@ -83,6 +83,10 @@ h1.logo {
         height: fit-content;
         margin: 30px 0;
     }
+}
+
+p.feedback {
+    font-size: 1.5rem;
 }
 
 .Home-box {

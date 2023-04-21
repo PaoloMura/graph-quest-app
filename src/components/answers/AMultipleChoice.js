@@ -87,7 +87,7 @@ export default function AMultipleChoice ({ question, progress, onSubmit, onNext,
           <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
             {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
           </p>
-          <p>
+          <p className='feedback'>
             {progress.feedback}
           </p>
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />

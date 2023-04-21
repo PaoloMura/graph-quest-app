@@ -229,7 +229,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
           <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
             {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
           </p>
-          <p>
+          <p className='feedback'>
             {progress.feedback}
           </p>
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
