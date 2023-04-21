@@ -16,8 +16,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
   let cy = null
   let layoutOptions = null
 
-  console.log('\n\n\n\n\n')
-
   function getNodeSpacing (node) {
     // Iterate over each node to find the closest node that is not in the same component
     let closestDistance = Infinity

@@ -206,7 +206,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
             value={answerToString()}
           />
           <br />
-          <Button variant='secondary' onClick={handleReset}>Reset</Button>
+          <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
           <br />
           <br />
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />

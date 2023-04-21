@@ -186,7 +186,7 @@ export default function ASelectPath ({ question, progress, onSubmit, onNext, sub
             value={answer.toString()}
           />
           <br />
-          <Button variant='secondary' onClick={handleReset}>Reset</Button>
+          <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
           <br />
           <br />
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />

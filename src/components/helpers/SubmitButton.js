@@ -22,10 +22,10 @@ export default function SubmitButton ({ onSubmit, onNext, submitStatus }) {
   }
 
   return (
-    <div className="d-grid gap-2">
+    <div className='d-grid gap-2'>
       <Button
-        variant="primary"
-        size="md"
+        variant='primary'
+        size='lg'
         onClick={onClick}
       >
         {text}

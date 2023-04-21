@@ -1,6 +1,9 @@
 import React from 'react'
 import axios from 'axios'
 import Button from 'react-bootstrap/Button'
+import Image from 'react-bootstrap/Image'
+import logo from '../../data/images/logo.png'
+import Stack from 'react-bootstrap/Stack'
 
 function Header ({ btnType, backPath, removeToken }) {
   function logMeOut () {
@@ -20,19 +23,21 @@ function Header ({ btnType, backPath, removeToken }) {
 
   return (
     <div id='header'>
-      <h1>Graph Quest</h1>
-      {
-        btnType === 'logout' &&
-          <Button variant='secondary' onClick={logMeOut} id='btn-logout'>Logout</Button>
-      }
-      {
-        btnType === 'back' &&
-          <Button variant='secondary' href={backPath} id='btn-logout'>Back</Button>
-      }
-      {
-        btnType === 'exit' &&
-          <Button variant='secondary' href={backPath} id='btn-logout'>Exit</Button>
-      }
+      <Stack direction='horizontal' gap={3}>
+        {
+          btnType === 'logout' &&
+            <Button variant='secondary' size='lg' onClick={logMeOut} id='btn-logout'>Logout</Button>
+        }
+        {
+          btnType === 'back' &&
+            <Button variant='secondary' size='lg' href={backPath} id='btn-logout'>Back</Button>
+        }
+        {
+          btnType === 'exit' &&
+            <Button variant='secondary' size='lg' href={backPath} id='btn-logout'>Exit</Button>
+        }
+        <Image src={logo} alt='Graph Quest' fluid className='logo' />
+      </Stack>
     </div>
   )
 }
