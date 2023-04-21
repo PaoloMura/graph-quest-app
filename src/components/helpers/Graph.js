@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import CytoscapeComponent from 'react-cytoscapejs'
 import cytoscape from 'cytoscape'
 import '../../App.css'
@@ -16,6 +16,29 @@ function Graph ({ myKey, settings, user_settings, data }) {
   let cy = null
   let layoutOptions = null
 
+  console.log('\n\n\n\n\n')
+
+  function getNodeSpacing (node) {
+    // Iterate over each node to find the closest node that is not in the same component
+    let closestDistance = Infinity
+    cy.nodes().forEach(n => {
+      if (n.id() !== node.id() && n.isNode() && n.connectedEdges().length > 0 && node.connectedEdges().intersection(n.connectedEdges()).length === 0) {
+        const pos1 = node.position()
+        const pos2 = n.position()
+        const dx = pos1.x - pos2.x
+        const dy = pos1.y - pos2.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        if (distance < closestDistance) {
+          closestDistance = distance
+        }
+      }
+    })
+
+    // Check if the closest node is within the desired distance
+    if (closestDistance === Infinity) return 5
+    else return Math.max(50 - closestDistance, 5)
+  }
+
   // Set the graph layout options (if bipartite, we also need to determine which column each node belongs in).
   function setLayoutOptions () {
     if (user_settings.layout === 'bipartite') {
@@ -25,8 +48,26 @@ function Graph ({ myKey, settings, user_settings, data }) {
           return { col: node.data('bipartite') }
         }
       }
+    } else if (user_settings.layout === 'force-directed') {
+      layoutOptions = {
+        ...layouts[user_settings.layout],
+        nodeSpacing: (node) => getNodeSpacing(node)
+      }
     } else {
       layoutOptions = layouts[user_settings.layout]
+    }
+  }
+
+  // Set graph style for edges of directed and weighted graphs.
+  function setEdgeClasses () {
+    let edgeClasses = []
+    if (data.elements.edges.length > 0 && 'weight' in data.elements.edges[0].data) {
+      edgeClasses.push('weighted')
+    }
+    if (data.directed) edgeClasses.push('directed')
+    edgeClasses = edgeClasses.join(' ')
+    for (const edge of cy.edges()) {
+      edge.addClass(edgeClasses)
     }
   }
 
@@ -53,28 +94,18 @@ function Graph ({ myKey, settings, user_settings, data }) {
     }
   }
 
-  // Set graph style for edges of directed and weighted graphs.
-  function setEdgeClasses () {
-    let edgeClasses = []
-    if (data.elements.edges.length > 0 && 'weight' in data.elements.edges[0].data) {
-      edgeClasses.push('weighted')
-    }
-    if (data.directed) edgeClasses.push('directed')
-    edgeClasses = edgeClasses.join(' ')
-    for (const edge of cy.edges()) {
-      edge.addClass(edgeClasses)
-    }
-  }
+  const memoizedInitialiseLabels = useCallback(initialiseLabels, [cy, user_settings])
 
   // Initial graph setup (order matters!).
   function initialise (data) {
-    // Set layout and import data.
+    // Import data.
     setLayoutOptions()
     cy.remove(cy.nodes())
     cy.json(data)
 
-    // console.log(data['elements']['nodes'][0]['data'])
-
+    // Set initial node positions.
+    // TODO: for force-directed layouts,
+    //  initialise separate components far away from each other
     if (data.elements.nodes.length > 0 &&
       'x' in data.elements.nodes[0].data &&
       'y' in data.elements.nodes[0].data) {
@@ -82,8 +113,24 @@ function Graph ({ myKey, settings, user_settings, data }) {
         node.position('x', node.data('x'))
         node.position('y', node.data('y'))
       }
+    } else {
+      const components = cy.elements().components()
+      if (components.length > 1) {
+        for (let i = 0; i < components.length; i++) {
+          for (const ele of components[i]) {
+            if (ele.isNode()) {
+              const proportion = i / components.length
+              const angle = proportion * 2 * Math.PI
+              const x = 150 * Math.cos(angle)
+              const y = 150 * Math.sin(angle)
+              ele.position({ x, y })
+            }
+          }
+        }
+      }
     }
 
+    // Start the layout algorithm.
     const layout = cy.layout(layoutOptions)
     layout.start()
 
@@ -217,6 +264,12 @@ function Graph ({ myKey, settings, user_settings, data }) {
       cy.fit({ padding })
     }
 
+    function handleLayoutStop () {
+      memoizedInitialiseLabels()
+    }
+
+    cy.on('layoutstop', handleLayoutStop)
+
     // Subscribe to action events
     document.addEventListener('highlightVertex', highlightVertex)
     document.addEventListener('highlightEdge', highlightEdge)
@@ -229,7 +282,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
       document.removeEventListener('highlightEdge', highlightEdge)
       window.removeEventListener('resize', handleResize)
     }
-  }, [cy, data.directed, myKey, settings])
+  }, [cy, data.directed, myKey, settings, memoizedInitialiseLabels])
 
   return (
     <>

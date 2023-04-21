@@ -2,14 +2,16 @@
   "force-directed": {
     "name": "cola",
     "animate": true,
-    "infinite": true,
+    "infinite": false,
     "edgeLength": 100,
-    "centerGraph": true,
+    "centerGraph": false,
     "padding": 40,
     "fit": true,
-    "nodeSpacing": 5,
+    "nodeSpacing": 50,
     "avoidOverlap": true,
-    "nodeDimensionsIncludeLabels": true
+    "nodeDimensionsIncludeLabels": true,
+    "handleDisconnected": true,
+    "randomize": false
   },
   "circle": {
     "name": "circle",

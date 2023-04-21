@@ -61,7 +61,14 @@ h1, h2 {
 }
 
 .answer-area {
-    border-left: 3px solid #808080;
+    border-left: 3px solid #dee2e6;
+}
+
+@media (max-width: 768px) {
+    .answer-area {
+        border-left: 0;
+        border-top: 3px solid #dee2e6;
+    }
 }
 
 .Home-box {

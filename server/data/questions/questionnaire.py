@@ -61,7 +61,8 @@ class MinSpanTree(QMultipleChoice):
 
     def generate_data(self) -> list[nx.Graph]:
         # With probability 1/5, choose a disconnected graph.
-        want_connected = random.random() > 0.2
+        # want_connected = random.random() > 0.2
+        want_connected = False
 
         # Generate the random graph.
         if want_connected:
