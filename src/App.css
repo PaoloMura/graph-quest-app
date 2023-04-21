@@ -62,7 +62,7 @@ h1.logo {
     height: 60vh;
     margin: auto;
     display: block;
-    /*border-style: solid;*/
+    border-style: solid;
 }
 
 .topic-area {
@@ -72,12 +72,16 @@ h1.logo {
 
 .answer-area {
     border-left: 3px solid var(--border-color);
+    height: 66vh;
+    overflow: scroll;
 }
 
 @media (max-width: 768px) {
     .answer-area {
         border-left: 0;
         border-top: 3px solid var(--border-color);
+        height: fit-content;
+        margin: 30px 0;
     }
 }
 
