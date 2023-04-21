@@ -136,8 +136,9 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
             value={answer.toString()}
           />
           <br />
-          <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
-          <br />
+          <div className='d-grid gap-2'>
+            <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
+          </div>
           <br />
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
         </Form>

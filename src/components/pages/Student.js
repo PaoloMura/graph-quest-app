@@ -40,7 +40,7 @@ function Student () {
   return (
     <div>
       <Header btnType='exit' backPath='/student/portal' />
-      <div className='GraphArea'>
+      <div className='topic-area'>
         {
           err
             ? <NotFound />

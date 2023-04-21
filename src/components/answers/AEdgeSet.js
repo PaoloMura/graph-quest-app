@@ -206,8 +206,9 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
             value={answerToString()}
           />
           <br />
-          <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
-          <br />
+          <div className='d-grid gap-2'>
+            <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
+          </div>
           <br />
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
         </Form>

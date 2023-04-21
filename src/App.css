@@ -65,10 +65,9 @@ h1.logo {
     /*border-style: solid;*/
 }
 
-.Graph-area {
-    height: 70vh;
-    display: block;
-    /*border-style: solid;*/
+.topic-area {
+    margin-top: 15px;
+    font-size: 1.3rem;
 }
 
 .answer-area {
