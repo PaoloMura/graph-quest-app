@@ -96,8 +96,8 @@ export default function ProgressRow ({ topicName, settings, questions }) {
     return (
       <Container>
         <Row>
-          <Col xs={9}>
-            <div>{'Question ' + number}</div>
+          <Col xs={6}>
+            <div>{'Q' + number}</div>
           </Col>
           <Col>
             {getTabIcon(status)}
