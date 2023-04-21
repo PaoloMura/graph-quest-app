@@ -6,10 +6,10 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 export default function FinishedModal ({ showModal, onClose, progress, settings }) {
-  let score = progress.reduce((tot, cur) => {
+  const score = progress.reduce((tot, cur) => {
     return cur.status === 'correct' ? tot + 1 : tot
   }, 0)
-  let total = progress.length
+  const total = progress.length
 
   return (
     <Modal
@@ -21,7 +21,7 @@ export default function FinishedModal ({ showModal, onClose, progress, settings 
       </ModalHeader>
       <ModalBody>
         You scored {score} out of {total}.
-        <br/>
+        <br />
         <ul>
           {
             progress.map((item, idx) => (
@@ -32,13 +32,13 @@ export default function FinishedModal ({ showModal, onClose, progress, settings 
         <Container>
           <Row>
             {
-              settings['feedback'] !== 'none' &&
-              <Col>
-                <Button variant="primary" onClick={onClose}>Check feedback</Button>
-              </Col>
+              settings.feedback !== 'none' &&
+                <Col>
+                  <Button variant='primary' onClick={onClose}>Return to answers</Button>
+                </Col>
             }
             <Col>
-              <Button variant="primary" href="/student/portal">Return to student portal</Button>
+              <Button variant='primary' href='/student/portal'>Return to student portal</Button>
             </Col>
           </Row>
         </Container>

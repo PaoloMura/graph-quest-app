@@ -39,7 +39,7 @@ function Student () {
 
   return (
     <div>
-      <Header btnType='back' backPath='/student/portal' />
+      <Header btnType='exit' backPath='/student/portal' />
       <div className='GraphArea'>
         {
           err
