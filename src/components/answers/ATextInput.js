@@ -37,7 +37,7 @@ export default function ATextInput ({ question, onSetQuestion, progress, onSubmi
     // Determine whether the answer is correct
     const ans = answer.toString()
     if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit)
+      getSolution(question, answer, onSubmit, onSetQuestion)
     } else {
       for (const sol of question.solutions) {
         if (sol.toString() === ans) {
@@ -54,6 +54,12 @@ export default function ATextInput ({ question, onSetQuestion, progress, onSubmi
     setError('')
   }
 
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13) {
+      event.preventDefault()
+    }
+  }
+
   if (progress.status === 'unanswered') {
     return (
       <div>
@@ -62,6 +68,7 @@ export default function ATextInput ({ question, onSetQuestion, progress, onSubmi
           <Form.Control
             value={answer}
             onChange={handleChangeAnswer}
+            onKeyDown={handleKeyDown}
           />
           <br />
           <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
