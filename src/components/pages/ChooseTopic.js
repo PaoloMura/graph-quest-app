@@ -10,13 +10,13 @@ function ChooseTopic () {
 
   return (
     <div>
-      <Header btnType="back" backPath="/"/>
-      <Form className="Login-box d-grid gap-2">
+      <Header btnType='back' backPath='/' />
+      <Form className='login-box d-grid gap-2'>
         <h2>Choose a Topic</h2>
-        <Form.Group className={'Login-row'}>
-          <Form.Control placeholder={'Topic code'} value={topicCode} onChange={updateCode}></Form.Control>
+        <Form.Group className='Login-row'>
+          <Form.Control placeholder='Topic code' value={topicCode} onChange={updateCode} />
         </Form.Group>
-        <Button variant="primary" className="lg" href={'/student/topics/' + topicCode}>Submit</Button>
+        <Button variant='primary' className='lg' href={'/student/topics/' + topicCode}>Submit</Button>
       </Form>
     </div>
   )

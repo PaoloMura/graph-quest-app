@@ -56,16 +56,42 @@ function Graph ({ myKey, settings, user_settings, data }) {
     }
   }
 
+  function highlightEdge (highlightList, edge, directed) {
+    const s = parseInt(edge.data('source'))
+    const t = parseInt(edge.data('target'))
+    if (highlightList === null) return false
+    for (const [u, v] of highlightList) {
+      if ((u === s && v === t) || (!directed && v === s && u === t)) return true
+    }
+    return false
+  }
+
   // Set graph style for edges of directed and weighted graphs.
   function setEdgeClasses () {
     let edgeClasses = []
+
     if (data.elements.edges.length > 0 && 'weight' in data.elements.edges[0].data) {
       edgeClasses.push('weighted')
     }
+
     if (data.directed) edgeClasses.push('directed')
     edgeClasses = edgeClasses.join(' ')
+
     for (const edge of cy.edges()) {
+      if (highlightEdge(user_settings.highlighted_edges, edge, data.directed)) {
+        edge.addClass('underlay')
+      }
       edge.addClass(edgeClasses)
+    }
+  }
+
+  function setNodeClasses () {
+    const xs = user_settings.highlighted_nodes
+    for (const node of cy.nodes()) {
+      const x = node.data('value')
+      if (xs !== null && xs.includes(x)) {
+        node.addClass('underlay')
+      }
     }
   }
 
@@ -102,8 +128,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
     cy.json(data)
 
     // Set initial node positions.
-    // TODO: for force-directed layouts,
-    //  initialise separate components far away from each other
     if (data.elements.nodes.length > 0 &&
       'x' in data.elements.nodes[0].data &&
       'y' in data.elements.nodes[0].data) {
@@ -152,6 +176,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
     // Apply styling to nodes and edges.
     initialiseLabels()
     setEdgeClasses()
+    setNodeClasses()
   }
 
   // Events and listeners for graph manipulation.
@@ -236,8 +261,9 @@ function Graph ({ myKey, settings, user_settings, data }) {
     function highlightVertex (event) {
       if (event.detail.graphKey !== myKey) return
       const vertex = cy.nodes('[id = "' + event.detail.vertex + '"]')[0]
-      if (event.detail.highlight) vertex.addClass('highlight')
-      else vertex.removeClass('highlight')
+      const type = event.detail.type
+      if (event.detail.highlight) vertex.addClass(type)
+      else vertex.removeClass(type)
     }
 
     function highlightEdge (event) {
@@ -249,8 +275,12 @@ function Graph ({ myKey, settings, user_settings, data }) {
         edge = cy.edges('[source = "' + event.detail.v1 + '"][target = "' + event.detail.v2 + '"], [source = "' + event.detail.v2 + '"][target = "' + event.detail.v1 + '"]')[0]
       }
       if (!(edge === undefined)) {
-        if (event.detail.highlight) edge.addClass('highlight')
-        else edge.removeClass('highlight')
+        const type = event.detail.type
+        if (event.detail.highlight) {
+          console.log('Adding class', type)
+          edge.addClass('colour')
+          console.log('Result:', edge.classes())
+        } else edge.removeClass(type)
       }
     }
 

@@ -12,14 +12,21 @@ cxttap_edge (source: int, target: int, graphKey: int)
 box_end (vertices: [int], edges: [[int, int]], graphKey: int)
 
 Supported Graph Actions:
-highlightVertex (vertex: int, highlight: bool, graphKey: int)
-highlightEdge (v1: int, v2: int, highlight: bool, graphKey: int)
+highlightVertex (vertex: int,
+                 type: 'colour' | 'underlay',
+                 highlight: bool,
+                 graphKey: int)
+highlightEdge (v1: int,
+               v2: int,
+               type: 'colour' | 'underlay',
+               highlight: bool,
+               graphKey: int)
  */
 
 export function triggerGraphEvent (name, value, graphKey) {
   const newValue = {
     ...value,
-    graphKey: graphKey
+    graphKey
   }
   const newEvent = new CustomEvent(name, { detail: newValue })
   document.dispatchEvent(newEvent)
@@ -28,7 +35,7 @@ export function triggerGraphEvent (name, value, graphKey) {
 export function triggerGraphAction (name, value, graphKey) {
   const newValue = {
     ...value,
-    graphKey: graphKey
+    graphKey
   }
   const newEvent = new CustomEvent(name, { detail: newValue })
   document.dispatchEvent(newEvent)

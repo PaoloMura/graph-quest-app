@@ -54,7 +54,7 @@
     }
   },
   {
-    "selector": "edge.highlight",
+    "selector": "edge.colour",
     "style": {
       "line-color": "#c00",
       "source-arrow-color": "#c00",
@@ -68,7 +68,7 @@
     }
   },
   {
-    "selector": "node.highlight",
+    "selector": "node.colour",
     "style": {
       "background-color": "#c00",
       "width": 25,
@@ -79,6 +79,20 @@
     "selector": "node:active",
     "style": {
       "overlay-shape": "ellipse"
+    }
+  },
+  {
+    "selector": ".underlay",
+    "style": {
+      "underlay-opacity": 0.3,
+      "underlay-color": "#00f",
+      "underlay-padding": 5
+    }
+  },
+  {
+    "selector": "node.underlay",
+    "style": {
+      "underlay-shape": "ellipse"
     }
   }
 ]

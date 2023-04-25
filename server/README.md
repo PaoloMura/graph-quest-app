@@ -187,6 +187,8 @@ $ python3 -m build
 $ python3 -m twine upload --skip-existing --repository testpypi dist/*
 ```
 
+Use `__token__` as the username and your PyPi token as the password.
+
 ### In the server directory, do the following:
 
 1. Activate the virtual environment:

@@ -192,7 +192,6 @@ def access_topic_data(topic_code):
         except Exception as e:
             return f'Error trying to access question class "{q_file}:{q_class}": {e}', 404
     if result['settings'].get('random_order', False):
-        print('shuffle')
         random.shuffle(result['questions'])
     # pprint(result)
     return result
@@ -220,7 +219,12 @@ def get_feedback(q_file, q_class):
     try:
         # Generate the feedback
         result, feedback = q.generate_feedback(copy.deepcopy(graphs), copy.deepcopy(answer))
-        return {'result': result, 'feedback': feedback}
+        return {
+            'result': result,
+            'feedback': feedback,
+            'highlighted_edges': q.highlighted_edges,
+            'highlighted_nodes': q.highlighted_nodes
+        }
     except Exception as e:
         return f'Error trying to generate feedback: {e}', 404
 

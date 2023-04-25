@@ -22,12 +22,12 @@ function TeacherLogin ({ setToken }) {
       .then((response) => {
         setToken(response.data.access_token)
       }).catch((error) => {
-      if (error.response) {
-        console.log(error.response)
-        console.log(error.response.status)
-        console.log(error.headers)
-      }
-    })
+        if (error.response) {
+          console.log(error.response)
+          console.log(error.response.status)
+          console.log(error.headers)
+        }
+      })
   }
 
   function handleChange (event) {
@@ -39,27 +39,27 @@ function TeacherLogin ({ setToken }) {
 
   return (
     <div>
-      <Header btnType="back" backPath="/"/>
-      <Form className={'Login-box'}>
+      <Header btnType='back' backPath='/' />
+      <Form className='login-box'>
         <h2>Teacher Login</h2>
         <Form.Control
-          className={'Login-row'}
+          className='Login-row'
           onChange={handleChange}
-          placeholder={'Username'}
+          placeholder='Username'
           text={loginForm.username}
           value={loginForm.username}
-          name={'username'}
+          name='username'
         />
         <Form.Control
-          className={'Login-row'}
-          type={'password'}
+          className='Login-row'
+          type='password'
           onChange={handleChange}
-          placeholder={'Password'}
+          placeholder='Password'
           text={loginForm.password}
           value={loginForm.password}
-          name={'password'}
+          name='password'
         />
-        <Button variant={'primary'} onClick={logMeIn} className={'Login-row'}>Login</Button>
+        <Button variant='primary' onClick={logMeIn} className='Login-row'>Login</Button>
       </Form>
     </div>
   )

@@ -75,6 +75,8 @@ class MinSpanTree(QMultipleChoice):
         # Randomly assign weights to each edge.
         weights = {(i, j): random.randint(self.w_min, self.w_max) for (i, j) in graph.edges}
         nx.set_edge_attributes(graph, values=weights, name='weight')
+        self.highlighted_nodes = list(graph.nodes)
+        self.highlighted_edges = list(graph.edges)
         return [graph]
 
     def generate_question(self, graphs: list[nx.Graph]) -> str:
@@ -119,9 +121,10 @@ class MinSpanTree(QMultipleChoice):
                     return False, f'G1 actually has a minimum spanning tree of weight {int(weight)}'
 
 
-def dfs(graph: nx.Graph) -> list[int]:
+def dfs(graph: nx.Graph):
     explored = [0 for _ in range(len(graph.nodes))]
     order = []
+    edges = []
 
     def helper(i):
         if explored[i] == 0:
@@ -129,11 +132,13 @@ def dfs(graph: nx.Graph) -> list[int]:
             order.append(i)
             for v in sorted(graph.neighbors(i)):
                 if not explored[v]:
+                    if len(order) < 6 and [i, v] not in edges:
+                        edges.append([i, v])
                     helper(v)
 
     helper(0)
 
-    return order
+    return order, edges
 
 
 class DFS(QVertexSet):
@@ -156,7 +161,7 @@ class DFS(QVertexSet):
                'it picks the vertex with lowest number first.'
 
     def generate_solutions(self, graphs: list[nx.Graph]) -> list[[int]]:
-        self.data = dfs(graphs[0])
+        self.data, _ = dfs(graphs[0])
         return [[self.data[5]]]
 
     def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
@@ -165,7 +170,9 @@ class DFS(QVertexSet):
         if self.data[5] == answer[0]:
             return True, ''
         else:
-            return False, f'The complete traversal would be {self.data}, giving {self.data[5]} as the sixth vertex visited.'
+            _, self.highlighted_edges = dfs(graphs[0])
+            return False, f'The complete traversal would be {self.data},' \
+                          f'giving {self.data[5]} as the sixth vertex visited.'
 
 
 def distribute_weight(weight: int, size: int) -> list[int]:

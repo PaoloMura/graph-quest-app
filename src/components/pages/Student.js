@@ -20,6 +20,24 @@ function Student () {
   const [data, setData] = useState(setInitialData)
   const [err, setErr] = useState(true)
 
+  const handleUpdateData = (idx, newData) => {
+    setData({
+      ...data,
+      questions: data.questions.map(
+        (q, i) => (i !== idx)
+          ? q
+          : {
+              ...q,
+              settings: {
+                ...q.settings,
+                highlighted_nodes: newData.highlighted_nodes,
+                highlighted_edges: newData.highlighted_edges
+              }
+            }
+      )
+    })
+  }
+
   useEffect(() => {
     axios({
       method: 'GET',
@@ -44,7 +62,12 @@ function Student () {
         {
           err
             ? <NotFound />
-            : <ProgressRow topicName={data.name} settings={data.settings} questions={data.questions} />
+            : <ProgressRow
+                topicName={data.name}
+                settings={data.settings}
+                questions={data.questions}
+                onUpdateData={handleUpdateData}
+              />
         }
       </div>
     </div>

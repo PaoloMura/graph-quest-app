@@ -55,6 +55,7 @@ h1.logo {
 
 .logo {
     max-height: 6vh;
+    margin-left: 10px;
 }
 
 #cy {
@@ -89,11 +90,10 @@ p.feedback {
     font-size: 1.5rem;
 }
 
-.Home-box {
+.home-box {
     margin: 30vh auto;
     padding: 35px;
-    border-style: solid;
-    border-width: 3px;
+    border: 3px solid var(--border-color);
     border-radius: 35px;
     width: 550px;
     max-width: 80vw;
@@ -109,11 +109,10 @@ p.feedback {
     margin-left: 15px;
 }
 
-.Login-box {
+.login-box {
     margin: 15vh auto;
     padding: 35px;
-    border-style: solid;
-    border-width: 3px;
+    border: 3px solid var(--border-color);
     border-radius: 35px;
     width: 550px;
     max-width: 80vw;

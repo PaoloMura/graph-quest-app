@@ -10,8 +10,12 @@ import AMultipleChoice from '../answers/AMultipleChoice'
 import settings from '../../data/settings.json'
 import AEdgeSet from '../answers/AEdgeSet'
 
-export default function Question ({ question, progress, onSubmit, onNext, submitStatus }) {
-  const props = { question, progress, onSubmit, onNext, submitStatus }
+export default function Question ({ question, setQuestion, myIndex, progress, onSubmit, onNext, submitStatus }) {
+  const onSetQuestion = (data) => {
+    setQuestion(myIndex, data)
+  }
+
+  const props = { question, onSetQuestion, progress, onSubmit, onNext, submitStatus }
 
   const answerComponents = {
     QSelectPath: <ASelectPath {...props} />,

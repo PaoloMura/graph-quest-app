@@ -7,7 +7,7 @@ import { equalSets } from '../utilities/sets'
 import { getSolution } from '../utilities/http'
 import SubmitButton from '../helpers/SubmitButton'
 
-export default function AVertexSet ({ question, progress, onSubmit, onNext, submitStatus }) {
+export default function AVertexSet ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (
     progress.answer !== undefined ? progress.answer : []
   ))
@@ -33,7 +33,7 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
     for (const vertex of answer) {
       triggerGraphAction(
         'highlightVertex',
-        { vertex, highlight: false },
+        { vertex, type: 'colour', highlight: false },
         0
       )
     }
@@ -44,7 +44,7 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
     // Determine whether the answer is correct
     const ans = new Set(answer)
     if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit)
+      getSolution(question, answer, onSubmit, onSetQuestion)
     } else {
       for (const solution of question.solutions) {
         const sol = new Set(solution)
@@ -63,13 +63,28 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
       const vertex = event.detail.vertex
       if (answer.includes(vertex)) {
         setAnswer(answer.filter(v => v !== vertex))
-        triggerGraphAction('highlightVertex', { vertex, highlight: false }, event.detail.graphKey)
+        const params = {
+          vertex,
+          type: 'colour',
+          highlight: false
+        }
+        triggerGraphAction('highlightVertex', params, event.detail.graphKey)
       } else {
         const limit = question.settings.selection_limit
         if (limit === -1 || limit === 1 || answer.length < limit) {
-          triggerGraphAction('highlightVertex', { vertex, highlight: true }, event.detail.graphKey)
+          let params = {
+            vertex,
+            type: 'colour',
+            highlight: true
+          }
+          triggerGraphAction('highlightVertex', params, event.detail.graphKey)
           if (limit === 1 && answer.length === 1) {
-            triggerGraphAction('highlightVertex', { vertex: answer[0], highlight: false }, event.detail.graphKey)
+            params = {
+              vertex: answer[0],
+              type: 'colour',
+              highlight: false
+            }
+            triggerGraphAction('highlightVertex', params, event.detail.graphKey)
             setAnswer([vertex])
           } else {
             setAnswer([...answer, vertex])
@@ -85,7 +100,12 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
       if (numInAnswer === nodes.length) {
         // Un-highlight all and remove them from answer
         for (const n of nodes) {
-          triggerGraphAction('highlightVertex', { vertex: n, highlight: false }, event.detail.graphKey)
+          const params = {
+            vertex: n,
+            type: 'colour',
+            highlight: false
+          }
+          triggerGraphAction('highlightVertex', params, event.detail.graphKey)
         }
         setAnswer(answer.filter(a => !nodes.includes(a)))
       } else {
@@ -94,7 +114,12 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
         const limit = question.settings.selection_limit
         if (limit === -1 || answer.length + missing.length <= limit) {
           for (const n of nodes) {
-            triggerGraphAction('highlightVertex', { vertex: n, highlight: true }, event.detail.graphKey)
+            const params = {
+              vertex: n,
+              type: 'colour',
+              highlight: true
+            }
+            triggerGraphAction('highlightVertex', params, event.detail.graphKey)
           }
           setAnswer(answer.concat(missing))
         }
@@ -115,7 +140,7 @@ export default function AVertexSet ({ question, progress, onSubmit, onNext, subm
       for (const v of progress.answer) {
         triggerGraphAction(
           'highlightVertex',
-          { vertex: v, highlight: true },
+          { vertex: v, type: 'colour', highlight: true },
           0
         )
       }

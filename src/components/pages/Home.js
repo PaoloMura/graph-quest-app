@@ -6,11 +6,11 @@ import Header from '../helpers/Header'
 function Home () {
   return (
     <div>
-      <Header/>
-      <div className={'Home-box'}>
+      <Header />
+      <div className='home-box'>
         <Stack gap={5}>
-          <Button href={'/teacher'}>Teacher</Button>
-          <Button href={'/student/portal'}>Student</Button>
+          <Button href='/teacher'>Teacher</Button>
+          <Button href='/student/portal'>Student</Button>
         </Stack>
       </div>
     </div>

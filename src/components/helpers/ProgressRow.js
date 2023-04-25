@@ -10,7 +10,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
-export default function ProgressRow ({ topicName, settings, questions }) {
+export default function ProgressRow ({ topicName, settings, questions, onUpdateData }) {
   const setInitialAnswers = () => new Array(questions.length).fill(
     {
       answer: undefined,
@@ -124,6 +124,8 @@ export default function ProgressRow ({ topicName, settings, questions }) {
             <br />
             <Question
               question={questions[index]}
+              setQuestion={onUpdateData}
+              myIndex={index}
               progress={progress[index]}
               onSubmit={handleSubmit}
               onNext={handleNext}
