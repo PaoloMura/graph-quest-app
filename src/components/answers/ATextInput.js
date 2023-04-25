@@ -31,7 +31,8 @@ export default function ATextInput ({ question, onSetQuestion, progress, onSubmi
     }
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault()
     // Validate the answer format
     if (!validateAnswer()) return
     // Determine whether the answer is correct
@@ -54,27 +55,18 @@ export default function ATextInput ({ question, onSetQuestion, progress, onSubmi
     setError('')
   }
 
-  const handleKeyDown = (event) => {
-    if (event.keyCode === 13) {
-      event.preventDefault()
-    }
-  }
-
   if (progress.status === 'unanswered') {
     return (
       <div>
         <Description description={question.description} />
-        <Form>
-          <Form.Control
-            value={answer}
-            onChange={handleChangeAnswer}
-            onKeyDown={handleKeyDown}
-          />
-          <br />
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-          <br />
-          {error !== '' && <Form.Text muted>{error}</Form.Text>}
-        </Form>
+        <Form.Control
+          value={answer}
+          onChange={handleChangeAnswer}
+        />
+        <br />
+        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
+        <br />
+        {error !== '' && <Form.Text muted>{error}</Form.Text>}
       </div>
     )
   } else {
