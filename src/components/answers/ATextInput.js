@@ -4,7 +4,7 @@ import { getSolution } from '../utilities/http'
 import Description from '../helpers/Description'
 import SubmitButton from '../helpers/SubmitButton'
 
-export default function ATextInput ({ question, progress, onSubmit, onNext, submitStatus }) {
+export default function ATextInput ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (
     progress.answer !== undefined ? progress.answer : ''
   ))

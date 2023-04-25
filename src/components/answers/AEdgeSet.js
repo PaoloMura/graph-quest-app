@@ -7,7 +7,7 @@ import { getSolution } from '../utilities/http'
 import Description from '../helpers/Description'
 import SubmitButton from '../helpers/SubmitButton'
 
-export default function AEdgeSet ({ question, progress, onSubmit, onNext, submitStatus }) {
+export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (
     progress.answer !== undefined ? progress.answer : []
   ))
@@ -29,7 +29,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
     for (const [source, target] of answer) {
       triggerGraphAction(
         'highlightEdge',
-        { v1: source, v2: target, highlight: false },
+        { v1: source, v2: target, type: 'colour', highlight: false },
         0
       )
     }
@@ -60,7 +60,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
   const handleSubmit = () => {
     // Determine whether the answer is correct
     if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit)
+      getSolution(question, answer, onSubmit, onSetQuestion)
     } else if (answerInSolutions()) onSubmit(answer, 'correct', '')
     else onSubmit(answer, 'incorrect', '')
   }
@@ -107,7 +107,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
         setAnswer(answer.filter((e) => edgesDifferent(e, [source, target], event.detail.graphKey)))
         triggerGraphAction(
           'highlightEdge',
-          { v1: source, v2: target, highlight: false },
+          { v1: source, v2: target, type: 'colour', highlight: false },
           event.detail.graphKey
         )
       } else {
@@ -116,13 +116,13 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
           setAnswer([...answer, [source, target]])
           triggerGraphAction(
             'highlightEdge',
-            { v1: source, v2: target, highlight: true },
+            { v1: source, v2: target, type: 'colour', highlight: true },
             event.detail.graphKey
           )
           if (limit === 1 && answer.length === 1) {
             triggerGraphAction(
               'highlightEdge',
-              { v1: answer[0][0], v2: answer[0][1], highlight: false },
+              { v1: answer[0][0], v2: answer[0][1], type: 'colour', highlight: false },
               event.detail.graphKey
             )
             setAnswer([[source, target]])
@@ -144,7 +144,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
         for (const e of edges) {
           triggerGraphAction(
             'highlightEdge',
-            { v1: e[0], v2: e[1], highlight: false },
+            { v1: e[0], v2: e[1], type: 'colour', highlight: false },
             event.detail.graphKey
           )
         }
@@ -157,7 +157,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
           for (const m of missing) {
             triggerGraphAction(
               'highlightEdge',
-              { v1: m[0], v2: m[1], highlight: true },
+              { v1: m[0], v2: m[1], type: 'colour', highlight: true },
               event.detail.graphKey
             )
           }
@@ -180,7 +180,7 @@ export default function AEdgeSet ({ question, progress, onSubmit, onNext, submit
       for (const [u, v] of progress.answer) {
         triggerGraphAction(
           'highlightEdge',
-          { v1: u, v2: v, highlight: true },
+          { v1: u, v2: v, type: 'colour', highlight: true },
           0
         )
       }

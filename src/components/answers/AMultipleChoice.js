@@ -4,7 +4,7 @@ import { getSolution } from '../utilities/http'
 import Description from '../helpers/Description'
 import SubmitButton from '../helpers/SubmitButton'
 
-export default function AMultipleChoice ({ question, progress, onSubmit, onNext, submitStatus }) {
+export default function AMultipleChoice ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => {
     if (progress.answer !== undefined) return progress.answer
     else return question.solutions.map((txt, _) => [txt, false])
@@ -18,7 +18,7 @@ export default function AMultipleChoice ({ question, progress, onSubmit, onNext,
   const handleSubmit = () => {
     // Determine whether the answer is correct
     if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit)
+      getSolution(question, answer, onSubmit, onSetQuestion)
     } else {
       for (let i = 0; i < question.solutions.length; i++) {
         if (question.solutions[i][1] !== answer[i][1]) {

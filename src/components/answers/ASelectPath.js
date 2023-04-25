@@ -6,7 +6,7 @@ import { getSolution } from '../utilities/http'
 import Description from '../helpers/Description'
 import SubmitButton from '../helpers/SubmitButton'
 
-export default function ASelectPath ({ question, progress, onSubmit, onNext, submitStatus }) {
+export default function ASelectPath ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (
     progress.answer !== undefined ? progress.answer : []
   ))
@@ -30,10 +30,18 @@ export default function ASelectPath ({ question, progress, onSubmit, onNext, sub
   const handleReset = () => {
     let prev
     for (const vertex of answer) {
-      triggerGraphAction('highlightVertex', { vertex, highlight: false }, 0)
+      triggerGraphAction(
+        'highlightVertex',
+        { vertex, type: 'colour', highlight: false },
+        0
+      )
       if (prev !== undefined) {
         const [u, v] = getEdge(prev, vertex)
-        triggerGraphAction('highlightEdge', { v1: u, v2: v, highlight: false }, 0)
+        triggerGraphAction(
+          'highlightEdge',
+          { v1: u, v2: v, type: 'colour', highlight: false },
+          0
+        )
       }
       prev = vertex
     }
@@ -44,7 +52,7 @@ export default function ASelectPath ({ question, progress, onSubmit, onNext, sub
     // Determine whether the answer is correct
     const ans = answer.toString()
     if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit)
+      getSolution(question, answer, onSubmit, onSetQuestion)
     } else {
       for (const sol of question.solutions) {
         if (sol.toString() === ans) {
@@ -61,26 +69,43 @@ export default function ASelectPath ({ question, progress, onSubmit, onNext, sub
       setAnswer([...answer, value])
       if (answer.length > 0) {
         // Un-highlight the previous vertex
-        triggerGraphAction('highlightVertex', { vertex: answer.at(-1), highlight: false }, graphKey)
+        triggerGraphAction(
+          'highlightVertex',
+          { vertex: answer.at(-1), type: 'colour', highlight: false },
+          graphKey
+        )
         // Highlight the edge
         const params = {
           v1: answer.at(-1),
           v2: value,
+          type: 'colour',
           highlight: true
         }
         triggerGraphAction('highlightEdge', params, graphKey)
       }
       // Highlight this vertex
-      triggerGraphAction('highlightVertex', { vertex: value, highlight: true }, graphKey)
+      triggerGraphAction(
+        'highlightVertex',
+        { vertex: value, type: 'colour', highlight: true },
+        graphKey
+      )
     }
 
     function popNode (graphKey) {
       if (answer.length === 0) return
       // Un-highlight the current vertex
-      triggerGraphAction('highlightVertex', { vertex: answer.at(-1), highlight: false }, graphKey)
+      triggerGraphAction(
+        'highlightVertex',
+        { vertex: answer.at(-1), type: 'colour', highlight: false },
+        graphKey
+      )
       if (answer.length > 1) {
         // Highlight the previously selected vertex
-        triggerGraphAction('highlightVertex', { vertex: answer.at(-2), highlight: true }, graphKey)
+        triggerGraphAction(
+          'highlightVertex',
+          { vertex: answer.at(-2), type: 'colour', highlight: true },
+          graphKey
+        )
         // Un-highlight the current edge if it does not appear anywhere else in the answer
         const v1 = answer.at(-2)
         const v2 = answer.at(-1)
@@ -88,7 +113,11 @@ export default function ASelectPath ({ question, progress, onSubmit, onNext, sub
           return val === v1 && idx < answer.length - 2 && answer.at(idx + 1) === v2
         }
         if (answer.find(checkAdjacent) === undefined) {
-          triggerGraphAction('highlightEdge', { v1, v2, highlight: false }, graphKey)
+          triggerGraphAction(
+            'highlightEdge',
+            { v1, v2, type: 'colour', highlight: false },
+            graphKey
+          )
         }
       }
       setAnswer(answer.slice(0, -1))
@@ -162,14 +191,14 @@ export default function ASelectPath ({ question, progress, onSubmit, onNext, sub
         for (let i = 1; i < progress.answer.length; i++) {
           triggerGraphAction(
             'highlightEdge',
-            { v1: progress.answer[i - 1], v2: progress.answer[i], highlight: true },
+            { v1: progress.answer[i - 1], v2: progress.answer[i], type: 'colour', highlight: true },
             0
           )
         }
       }
       triggerGraphAction(
         'highlightVertex',
-        { vertex: progress.answer.at(-1), highlight: true },
+        { vertex: progress.answer.at(-1), type: 'colour', highlight: true },
         0
       )
     }
