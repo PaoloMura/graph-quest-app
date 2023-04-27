@@ -259,6 +259,25 @@ class TestLabels(QTextInput):
         return ''
 
 
+class TestTree(QTextInput):
+    def __init__(self):
+        super().__init__(layout='tree')
+        self.roots = [-1]
+
+    def generate_data(self) -> list[nx.Graph]:
+        graph = nx.random_tree(10)
+        return [graph]
+
+    def generate_question(self, graphs: list[nx.Graph]) -> str:
+        return 'This is a test for tree layouts.'
+
+    def generate_solutions(self, graphs: list[nx.Graph]) -> list[str]:
+        return ['']
+
+    def generate_feedback(self, graphs: list[nx.Graph], answer: str) -> (bool, str):
+        return ''
+
+
 if __name__ == '__main__':
     q = Test()
     g = q.generate_data()

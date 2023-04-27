@@ -4,11 +4,13 @@ import cytoscape from 'cytoscape'
 import '../../App.css'
 import cyStyle from '../../cy-style.json'
 import cola from 'cytoscape-cola'
+import dagre from 'cytoscape-dagre'
 import { triggerGraphEvent } from '../utilities/graph-events'
 import layouts from '../../data/layouts.json'
 import { setLabelPos, setLabelPosBipartite, setLabelPosCircle } from '../utilities/label-positioning'
 
 cytoscape.use(cola)
+cytoscape.use(dagre)
 
 function Graph ({ myKey, settings, user_settings, data }) {
   // Do not modify these after initialisation!
@@ -51,6 +53,12 @@ function Graph ({ myKey, settings, user_settings, data }) {
         ...layouts[user_settings.layout],
         nodeSpacing: (node) => getNodeSpacing(node)
       }
+    } else if (user_settings.layout === 'tree') {
+      layoutOptions = {
+        ...layouts[user_settings.layout],
+        roots: [user_settings.roots[myKey]]
+      }
+      console.log(layoutOptions)
     } else {
       layoutOptions = layouts[user_settings.layout]
     }
@@ -321,7 +329,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
         cy={(c) => {
           cy = c
           initialise(data)
-          // setListeners()
         }}
       />
     </>
