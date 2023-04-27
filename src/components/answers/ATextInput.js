@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import { getSolution } from '../utilities/http'
-import Description from '../helpers/Description'
-import SubmitButton from '../helpers/SubmitButton'
+import Description from '../subcomponents/Description'
+import SubmitButton from '../generic/SubmitButton'
 
 export default function ATextInput ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (

@@ -75,8 +75,6 @@ class MinSpanTree(QMultipleChoice):
         # Randomly assign weights to each edge.
         weights = {(i, j): random.randint(self.w_min, self.w_max) for (i, j) in graph.edges}
         nx.set_edge_attributes(graph, values=weights, name='weight')
-        self.highlighted_nodes = list(graph.nodes)
-        self.highlighted_edges = list(graph.edges)
         return [graph]
 
     def generate_question(self, graphs: list[nx.Graph]) -> str:

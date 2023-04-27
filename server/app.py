@@ -16,7 +16,7 @@ import json
 import os
 from pprint import pprint
 import random
-from resources import delete_topic, update_topic, get_topic, get_questions
+from resources import delete_topic, update_topic, get_topic, get_questions, delete_file, upload_file
 from server import load_question, generate_question, test_new_file
 
 # Initial Setup
@@ -94,48 +94,40 @@ if env == 'development':
             return 'Module not found', 404
 
 
-    @app.route('/api/teacher/questions/<file>', methods=['DELETE'])
+    @app.route('/api/teacher/questions/<file>', methods=['GET', 'POST', 'DELETE'])
     @jwt_required()
     def access_file(file):
-        """Handle requests on the question file resources"""
-        if os.path.exists(QUESTIONS_PATH + file):
-            os.remove(QUESTIONS_PATH + file)
-            return 'Success', 201
-        else:
-            return 'File not found', 404
-
-
-    @app.route('/api/upload/file', methods=['POST'])
-    @jwt_required()
-    def upload_file():
-        """Handle question file upload"""
-        file = request.files['file']
-        if file.content_type != 'text/x-python-script':
-            return 'File type must be a Python script', 400
-        filename = file.filename
-        destination = QUESTIONS_PATH + filename
-        if os.path.exists(destination):
-            return 'File already exists', 400
-        try:
-            file.save(destination)
-            error = test_new_file(filename)
-            if error is None:
+        """Handle requests on the question files resource for teachers"""
+        if request.method == 'DELETE':
+            try:
+                delete_file(file)
+                return 'Success', 200
+            except FileNotFoundError as e:
+                return str(e), 404
+            except Exception as e:
+                return str(e), 400
+        elif request.method == 'POST':
+            try:
+                f = request.files['file']
+                if f.content_type != 'text/x-python-script':
+                    return 'File type must be a Python script', 400
+                destination = QUESTIONS_PATH + f.filename
+                upload_file(destination, f)
+                error = test_new_file(f.filename)
+                if error is not None:
+                    os.remove(destination)
+                    return f'Failed validation: {error.args[0]}', 400
                 return 'Success', 201
-            else:
-                os.remove(destination)
-                return error.args[0], 400
-        except Exception as e:
-            os.remove(destination)
-            return f'Failed validation: {e}', 400
-
-
-    @app.route('/api/download/<file>', methods=['GET'])
-    @jwt_required()
-    def download_file(file):
-        """Handle question file download"""
-        if '/' in file or '..' in file or len(file) < 4 or file[-3:] != '.py':
-            return 'Bad request: filename not valid', 400
-        return send_from_directory(QUESTIONS_PATH, file, mimetype='text/plain', as_attachment=True, download_name=file)
+            except Exception as e:
+                return str(e), 400
+        elif request.method == 'GET':
+            if '/' in file or '..' in file or len(file) < 4 or file[-3:] != '.py':
+                return 'Bad request: filename not valid', 400
+            return send_from_directory(QUESTIONS_PATH,
+                                       file,
+                                       mimetype='text/plain',
+                                       as_attachment=True,
+                                       download_name=file)
 
 
     @app.route('/api/teacher/topics/<topic_code>', methods=['GET', 'PUT', 'DELETE'])

@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { Table } from 'react-bootstrap'
-import TableRow from '../helpers/TableRow'
-import BottomRow from '../helpers/BottomRow'
+import { TblButton, TblText } from '../generic/TableRow'
+import BottomRow from '../generic/BottomRow'
 import DeleteModal from '../modals/DeleteModal'
 import FileUploadModal from '../modals/FileUploadModal'
 import TopicModal from '../modals/TopicModal'
 import CodeModal from '../modals/CodeModal'
-import Header from '../helpers/Header'
+import Header from '../subcomponents/Header'
 import ErrorModal from '../modals/ErrorModal'
 
 function Teacher ({ token, removeToken, setToken }) {
@@ -23,14 +23,16 @@ function Teacher ({ token, removeToken, setToken }) {
 
   const [content, setContent] = useState(setInitialContent)
   const [delFile, setDelFile] = useState('')
+  const [delFileError, setDelFileError] = useState('')
   const [delTopic, setDelTopic] = useState('')
+  const [delTopicError, setDelTopicError] = useState('')
   const [showFileUpload, setShowFileUpload] = useState(false)
   const [showTopic, setShowTopic] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState('')
   const [selectedCode, setSelectedCode] = useState('0')
   const [error, setError] = useState('')
 
-  const getContent = () => {
+  const getContent = useCallback(() => {
     axios({
       method: 'GET',
       url: '/api/teacher/content',
@@ -49,7 +51,7 @@ function Teacher ({ token, removeToken, setToken }) {
         console.log(error.response)
       }
     })
-  }
+  }, [token, setToken])
 
   const handleCloseError = () => {
     setError('')
@@ -59,7 +61,7 @@ function Teacher ({ token, removeToken, setToken }) {
     // Download the file from the server
     axios({
       method: 'GET',
-      url: '/api/download/' + item,
+      url: '/api/teacher/questions/' + item,
       headers: {
         Authorization: 'Bearer ' + token
       },
@@ -83,9 +85,16 @@ function Teacher ({ token, removeToken, setToken }) {
     })
   }
 
-  const handleOpenDelFile = (item) => setDelFile(item)
-  const handleCloseDelFile = () => setDelFile('')
+  const handleOpenDelFile = (item) => {
+    setDelFile(item)
+    setDelFileError('')
+  }
+  const handleCloseDelFile = () => {
+    setDelFile('')
+    setDelFileError('')
+  }
   const handleDelFile = () => {
+    setDelFileError('')
     // Delete the file from the server
     axios({
       method: 'DELETE',
@@ -106,13 +115,21 @@ function Teacher ({ token, removeToken, setToken }) {
     }).catch((error) => {
       if (error.response) {
         console.log(error.response)
+        setDelFileError(error.response.data)
       }
     })
   }
 
-  const handleOpenDelTopic = (item) => setDelTopic(item)
-  const handleCloseDelTopic = () => setDelTopic('')
+  const handleOpenDelTopic = (item) => {
+    setDelTopic(item)
+    setDelTopicError('')
+  }
+  const handleCloseDelTopic = () => {
+    setDelTopic('')
+    setDelTopicError('')
+  }
   const handleDelTopic = () => {
+    setDelTopicError('')
     // Delete the topic from the server
     axios({
       method: 'DELETE',
@@ -133,6 +150,7 @@ function Teacher ({ token, removeToken, setToken }) {
     }).catch((error) => {
       if (error.response) {
         console.log(error.response)
+        setDelTopicError(error.response.data)
       }
     })
   }
@@ -181,7 +199,7 @@ function Teacher ({ token, removeToken, setToken }) {
 
   useEffect(() => {
     getContent()
-  }, [])
+  }, [getContent])
 
   return (
     <div>
@@ -193,13 +211,19 @@ function Teacher ({ token, removeToken, setToken }) {
             <Table bordered hover>
               <tbody>
                 {content.files.map((f) => (
-                  <TableRow
-                    key={f.file}
-                    text={f.file}
-                    myKey={f.file}
-                    onDownload={handleDownloadFile}
-                    onDelete={handleOpenDelFile}
-                  />
+                  <tr key={f.file}>
+                    <TblText text={f.file} />
+                    <TblButton
+                      myKey={f.file}
+                      icon='download'
+                      onClick={handleDownloadFile}
+                    />
+                    <TblButton
+                      myKey={f.file}
+                      icon='delete'
+                      onClick={handleOpenDelFile}
+                    />
+                  </tr>
                 ))}
                 <BottomRow colSpan={3} onClick={handleOpenFileUpload} />
               </tbody>
@@ -210,14 +234,11 @@ function Teacher ({ token, removeToken, setToken }) {
             <Table bordered hover>
               <tbody>
                 {content.topics.map((topic) => (
-                  <TableRow
-                    key={topic.topic_code}
-                    text={topic.name}
-                    link={handleSelectTopic}
-                    myKey={topic.topic_code}
-                    share={setSelectedCode}
-                    onDelete={handleOpenDelTopic}
-                  />
+                  <tr key={topic.topic_code}>
+                    <TblText myKey={topic.topic_code} text={topic.name} onClick={handleSelectTopic} />
+                    <TblButton myKey={topic.topic_code} icon='share' onClick={setSelectedCode} />
+                    <TblButton myKey={topic.topic_code} icon='delete' onClick={handleOpenDelTopic} />
+                  </tr>
                 ))}
                 <BottomRow colSpan={3} onClick={handleNewTopic} />
               </tbody>
@@ -225,8 +246,18 @@ function Teacher ({ token, removeToken, setToken }) {
           </Col>
         </Row>
       </Container>
-      <DeleteModal deleting={delFile} closeDelete={handleCloseDelFile} performDelete={handleDelFile} />
-      <DeleteModal deleting={delTopic} closeDelete={handleCloseDelTopic} performDelete={handleDelTopic} />
+      <DeleteModal
+        deleting={delFile}
+        closeDelete={handleCloseDelFile}
+        performDelete={handleDelFile}
+        error={delFileError}
+      />
+      <DeleteModal
+        deleting={delTopic}
+        closeDelete={handleCloseDelTopic}
+        performDelete={handleDelTopic}
+        error={delTopicError}
+      />
       <FileUploadModal
         showModal={showFileUpload}
         closeModal={handleCloseFileUpload}

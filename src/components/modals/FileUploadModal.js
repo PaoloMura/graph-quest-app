@@ -16,7 +16,7 @@ export default function FileUploadModal ({
   const [errorMsg, setErrorMsg] = useState('')
 
   const handleSubmit = async (event) => {
-    let { valid, reason } = validateFile(selectedFile)
+    const { valid, reason } = validateFile(selectedFile)
     if (!valid) {
       setErrorMsg(reason)
       event.preventDefault()
@@ -28,7 +28,7 @@ export default function FileUploadModal ({
     formData.append('file', selectedFile)
     axios({
       method: 'POST',
-      url: '/api/upload/file',
+      url: '/api/teacher/questions/file',
       data: formData,
       headers: {
         Authorization: 'Bearer ' + token
@@ -59,14 +59,14 @@ export default function FileUploadModal ({
       </ModalHeader>
       <ModalBody>
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="formFileInput">
-            <Form.Control type="file" onChange={handleFileSelect}/>
+          <Form.Group controlId='formFileInput'>
+            <Form.Control type='file' onChange={handleFileSelect} />
             {errorMsg && <Form.Text muted>{errorMsg}</Form.Text>}
           </Form.Group>
-          <br/>
+          <br />
           <Button
-            variant="primary"
-            type="submit"
+            variant='primary'
+            type='submit'
             disabled={selectedFile === null || selectedFile === undefined}
           >
             Upload

@@ -4,9 +4,9 @@ import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
-import BottomRow from '../helpers/BottomRow'
+import BottomRow from '../generic/BottomRow'
 import axios from 'axios'
-import TableRow from '../helpers/TableRow'
+import { TblButton, TblDropDown } from '../generic/TableRow'
 
 export default function TopicModal ({
   showModal,
@@ -266,17 +266,25 @@ export default function TopicModal ({
           <Table bordered hover>
             <tbody>
               {data.questions.map((question, index) => (
-                <TableRow
-                  key={question.index}
-                  myKey={question.index}
-                  selectedFile={question.file}
-                  files={files.map((f) => (f.file))}
-                  onChangeFile={setFile}
-                  selectedClass={question.class}
-                  classes={files.find(f => (f.file === question.file)).questions}
-                  onChangeClass={setClass}
-                  onDelete={removeQuestion}
-                />
+                <tr key={question.index}>
+                  <TblDropDown
+                    myKey={question.index}
+                    selected={question.file}
+                    choices={files.map(f => f.file)}
+                    onChange={setFile}
+                  />
+                  <TblDropDown
+                    myKey={question.index}
+                    selected={question.class}
+                    choices={files.find(f => (f.file === question.file)).questions}
+                    onChange={setClass}
+                  />
+                  <TblButton
+                    myKey={question.index}
+                    icon='delete'
+                    onClick={removeQuestion}
+                  />
+                </tr>
               ))}
               <BottomRow colSpan={3} onClick={addQuestion} />
             </tbody>

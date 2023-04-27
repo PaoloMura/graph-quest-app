@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { triggerGraphAction } from '../utilities/graph-events'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import Description from '../helpers/Description'
+import Description from '../subcomponents/Description'
 import { equalSets } from '../utilities/sets'
 import { getSolution } from '../utilities/http'
-import SubmitButton from '../helpers/SubmitButton'
+import SubmitButton from '../generic/SubmitButton'
 
 export default function AVertexSet ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
   const [answer, setAnswer] = useState(() => (

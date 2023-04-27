@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import ProgressRow from '../helpers/ProgressRow'
-import Header from '../helpers/Header'
-import NotFound from '../helpers/NotFound'
+import ProgressRow from '../subcomponents/ProgressRow'
+import Header from '../subcomponents/Header'
+import NotFound from './NotFound'
 
 function Student () {
   const { topic_code } = useParams()

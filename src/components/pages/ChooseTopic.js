@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Header from '../helpers/Header'
+import Header from '../subcomponents/Header'
 import { useNavigate } from 'react-router-dom'
 
 function ChooseTopic () {

@@ -69,6 +69,39 @@ def get_topic(topic_code: str):
         return {}, 404
 
 
+def __file_used(file):
+    with open(TOPICS_FILE, 'r') as f:
+        data = json.load(f)
+        for topic in data.values():
+            for question in topic['questions']:
+                if question['file'] == file:
+                    return True, topic['name']
+    return False, ''
+
+
+def delete_file(file):
+    """Deletes the file with the given name"""
+    if os.path.exists(QUESTIONS_PATH + file):
+        used, topic = __file_used(file)
+        if used:
+            raise ValueError(f"Can't delete file used in {topic} topic")
+        else:
+            os.remove(QUESTIONS_PATH + file)
+    else:
+        raise FileNotFoundError
+
+
+def upload_file(filepath, file):
+    """Handle question file upload"""
+    if os.path.exists(filepath):
+        raise FileExistsError
+    try:
+        file.save(filepath)
+    except Exception as e:
+        os.remove(filepath)
+        raise ValueError(f'Failed upload: {e}')
+
+
 def load_module(file: str):
     """Load the specified Python module dynamically"""
     filepath = QUESTIONS_PATH + file.replace('.py', '')

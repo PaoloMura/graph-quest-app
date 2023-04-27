@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Header from '../helpers/Header'
+import Header from '../subcomponents/Header'
 
 function TeacherLogin ({ setToken }) {
   const [loginForm, setloginForm] = useState({
