@@ -266,7 +266,7 @@ class TestTree(QTextInput):
 
     def generate_data(self) -> list[nx.Graph]:
         graph = nx.random_tree(10)
-        return [graph]
+        return []
 
     def generate_question(self, graphs: list[nx.Graph]) -> str:
         return 'This is a test for tree layouts.'

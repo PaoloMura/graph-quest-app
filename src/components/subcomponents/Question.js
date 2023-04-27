@@ -25,28 +25,32 @@ export default function Question ({ question, setQuestion, myIndex, progress, on
     QEdgeSet: <AEdgeSet {...props} />
   }
 
+  let answerClass = 'answer-area'
+  if (question.graphs.length > 0) answerClass += ' answer-margin'
+
   return (
     <div>
       <Container>
         <Row>
-          <Col xs={12} md={7}>
-            <Row className='Graph-area'>
-              {
-                question.graphs.map((graph, idx) => (
-                  <Col key={idx}>
-                    <h2>G{idx + 1}</h2>
-                    <Graph
-                      myKey={idx}
-                      settings={settings[question.type]}
-                      user_settings={question.settings}
-                      data={graph}
-                    />
-                  </Col>
-                ))
-              }
-            </Row>
-          </Col>
-          <Col className='answer-area'>
+          {question.graphs.length > 0 &&
+            <Col xs={12} md={7}>
+              <Row className='Graph-area'>
+                {
+                  question.graphs.map((graph, idx) => (
+                    <Col key={idx}>
+                      <h2>G{idx + 1}</h2>
+                      <Graph
+                        myKey={idx}
+                        settings={settings[question.type]}
+                        user_settings={question.settings}
+                        data={graph}
+                      />
+                    </Col>
+                  ))
+                }
+              </Row>
+            </Col>}
+          <Col className={answerClass}>
             {answerComponents[question.type]}
           </Col>
         </Row>
