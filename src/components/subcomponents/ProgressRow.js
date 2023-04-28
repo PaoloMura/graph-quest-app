@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Question from './Question'
@@ -11,15 +11,22 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 export default function ProgressRow ({ topicName, settings, questions, onUpdateData }) {
-  const setInitialAnswers = () => new Array(questions.length).fill(
+  const setInitialAnswers = (qs) => new Array(qs.length).fill(
     {
       answer: undefined,
       status: 'unanswered'
     })
 
   const [selected, setSelected] = useState(0)
-  const [progress, setProgress] = useState(setInitialAnswers)
+  const [progress, setProgress] = useState(setInitialAnswers(questions))
   const [showFinished, setShowFinished] = useState(false)
+
+  useEffect(() => {
+    setProgress(setInitialAnswers(questions))
+    return () => {
+      setProgress(setInitialAnswers(questions))
+    }
+  }, [questions])
 
   const inProgress = progress.some(item => item.status === 'unanswered')
   const disabledManualNav = settings.linear && inProgress

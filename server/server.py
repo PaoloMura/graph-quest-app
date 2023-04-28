@@ -81,8 +81,12 @@ def generate_question(q_file: str, q_class: str) -> dict:
         if q_sett['layout'] == 'tree':
             roots = q_sett['roots']
             for i, tree in enumerate(data):
-                if not roots or len(roots) <= i or roots[i] not in tree.nodes:
-                    q_sett['roots'][i] = get_root(data[i])
+                if not roots:
+                    q_sett['roots'] = [get_root(tree)]
+                elif len(roots) <= i:
+                    q_sett['roots'].append(get_root(tree))
+                elif roots[i] not in tree.nodes:
+                    q_sett['roots'][i] = get_root(tree)
     except Exception as e:
         raise type(e)(f'Failed to set tree root: {e}') from e
 

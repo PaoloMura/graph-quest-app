@@ -259,35 +259,31 @@ class TestLabels(QTextInput):
         return ''
 
 
-class TestTree(QTextInput):
+class TestData(QTextInput):
     def __init__(self):
-        super().__init__(layout='tree')
-        self.roots = [-1]
+        super().__init__(layout='force-directed')
+        self.labels = True
 
     def generate_data(self) -> list[nx.Graph]:
-        graph = nx.random_tree(10)
-        return []
+        graph = nx.random_tree(8)
+        for node in graph.nodes:
+            graph.nodes[node]['data'] = [str(i) for i in range(random.randint(1, 4))]
+        return [graph]
 
     def generate_question(self, graphs: list[nx.Graph]) -> str:
-        return 'This is a test for tree layouts.'
+        return 'This is a test for node data.'
 
     def generate_solutions(self, graphs: list[nx.Graph]) -> list[str]:
         return ['']
 
     def generate_feedback(self, graphs: list[nx.Graph], answer: str) -> (bool, str):
-        return ''
+        return True, ''
 
 
 if __name__ == '__main__':
-    q = Test()
-    g = q.generate_data()
-    print('graph:')
-    print(g[0].nodes())
-    print(g[0].edges())
-    print('Generating solutions...')
-    s = q.generate_solutions(g)
-    print('solutions:')
-    for sol in s:
-        print(sol)
-        assert q.generate_feedback(g, sol)[0]
-    print('All tests pass!')
+    from converter import nx2cy
+    from pprint import pprint
+    q = TestData()
+    gs = q.generate_data()
+    d = nx2cy(gs[0])
+    pprint(d)

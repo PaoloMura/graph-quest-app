@@ -18,7 +18,7 @@ function Student () {
   }
 
   const [data, setData] = useState(setInitialData)
-  const [err, setErr] = useState(true)
+  const [err, setErr] = useState('')
 
   const handleUpdateData = (idx, newData) => {
     setData({
@@ -45,10 +45,10 @@ function Student () {
     }).then((response) => {
       const res = response.data
       setData(res)
-      setErr(false)
+      setErr('')
     }).catch((error) => {
       if (error.response) {
-        setErr(true)
+        setErr(error.response.data)
         console.log(error.response)
       }
     })
@@ -61,7 +61,7 @@ function Student () {
       <div className='topic-area'>
         {
           err
-            ? <NotFound />
+            ? <NotFound error={err} />
             : <ProgressRow
                 topicName={data.name}
                 settings={data.settings}

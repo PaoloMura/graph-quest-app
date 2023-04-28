@@ -17,6 +17,17 @@ function Graph ({ myKey, settings, user_settings, data }) {
   // It will trigger a rerender of the component and, in the worst case, an infinite loop.
   let cy = null
   let layoutOptions = null
+  const style = cyStyle
+
+  style.push({
+    selector: 'node.ring',
+    style: {
+      width: (ele) => {
+        const label = ele.data('label')
+        return Math.max(30, 18 * label.length)
+      }
+    }
+  })
 
   function getNodeSpacing (node) {
     // Iterate over each node to find the closest node that is not in the same component
@@ -94,11 +105,31 @@ function Graph ({ myKey, settings, user_settings, data }) {
   }
 
   function setNodeClasses () {
-    const xs = user_settings.highlighted_nodes
+    const hn = user_settings.highlighted_nodes
     for (const node of cy.nodes()) {
       const x = node.data('value')
-      if (xs !== null && xs.includes(x)) {
+      if (hn !== null && hn.includes(x)) {
         node.addClass('underlay')
+      }
+      if (user_settings.labels) node.addClass('label')
+      const data = node.data('data')
+      if (data.length > 0) {
+        (data.length === 1) ? node.addClass('blank') : node.addClass('box')
+        for (let i = 0; i < data.length; i++) {
+          cy.add({
+            group: 'nodes',
+            data: {
+              id: node.data('id') + ':' + i,
+              parent: node.data('id'),
+              label: data[i]
+            },
+            position: {
+              x: i * Math.max(30, 18 * data[i].length),
+              y: 200
+            },
+            classes: ['label', (data.length === 1) ? 'ring' : 'blank']
+          })
+        }
       }
     }
   }
@@ -106,6 +137,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
   function initialiseLabels () {
     const n_nodes = cy.nodes().length
     for (const node of cy.nodes()) {
+      if (node.data('parent')) continue
       // Add a label to the node
       const label = user_settings.node_prefix + node.data('id')
       node.data('label', label)
