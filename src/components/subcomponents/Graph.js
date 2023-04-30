@@ -4,13 +4,11 @@ import cytoscape from 'cytoscape'
 import '../../App.css'
 import cyStyle from '../../cy-style.json'
 import cola from 'cytoscape-cola'
-import dagre from 'cytoscape-dagre'
 import { triggerGraphEvent } from '../utilities/graph-events'
 import layouts from '../../data/layouts.json'
 import { setLabelPos, setLabelPosBipartite, setLabelPosCircle } from '../utilities/label-positioning'
 
 cytoscape.use(cola)
-cytoscape.use(dagre)
 
 function Graph ({ myKey, settings, user_settings, data }) {
   // Do not modify these after initialisation!
@@ -28,6 +26,8 @@ function Graph ({ myKey, settings, user_settings, data }) {
       }
     }
   })
+
+  setLayoutOptions()
 
   function getNodeSpacing (node) {
     // Iterate over each node to find the closest node that is not in the same component
@@ -69,6 +69,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
         ...layouts[user_settings.layout],
         roots: [user_settings.roots[myKey]]
       }
+      // layoutOptions = layouts[user_settings.layout]
       console.log(layoutOptions)
     } else {
       layoutOptions = layouts[user_settings.layout]
@@ -111,9 +112,10 @@ function Graph ({ myKey, settings, user_settings, data }) {
       if (hn !== null && hn.includes(x)) {
         node.addClass('underlay')
       }
+      console.log('settings:', user_settings)
       if (user_settings.labels) node.addClass('label')
       const data = node.data('data')
-      if (data.length > 0) {
+      if (data?.length > 0) {
         (data.length === 1) ? node.addClass('blank') : node.addClass('box')
         for (let i = 0; i < data.length; i++) {
           cy.add({
@@ -131,6 +133,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
           })
         }
       }
+      console.log('classes:', node.classes())
     }
   }
 
@@ -163,7 +166,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
   // Initial graph setup (order matters!).
   function initialise (data) {
     // Import data.
-    setLayoutOptions()
     cy.remove(cy.nodes())
     cy.json(data)
 
@@ -213,8 +215,10 @@ function Graph ({ myKey, settings, user_settings, data }) {
       .style({ 'active-bg-size': 0 })
       .update()
 
-    // Apply styling to nodes and edges.
+    // Set node label positions.
     initialiseLabels()
+
+    // Apply styling to nodes and edges.
     setEdgeClasses()
     setNodeClasses()
   }
@@ -356,8 +360,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
     <>
       <CytoscapeComponent
         id='cy'
-        layout={layoutOptions}
-        stylesheet={cyStyle}
+        stylesheet={style}
         cy={(c) => {
           cy = c
           initialise(data)

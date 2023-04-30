@@ -40,14 +40,14 @@
     }
   },
   {
-    "selector": ".label",
+    "selector": "node.label",
     "style": {
       "label": "data(label)",
       "font-size": 25
     }
   },
   {
-    "selector": ".styled-label",
+    "selector": "node.styled-label",
     "style": {
       "font-style": "italic",
       "font-family": "serif"
@@ -63,7 +63,7 @@
     }
   },
   {
-    "selector": ".weighted",
+    "selector": "edge.weighted",
     "style": {
       "text-background-color": "#fff",
       "text-background-opacity": 1,
@@ -74,10 +74,11 @@
     }
   },
   {
-    "selector": ".directed",
+    "selector": "edge.directed",
     "style": {
       "target-arrow-color": "#000",
-      "target-arrow-shape": "triangle"
+      "target-arrow-shape": "triangle",
+      "arrow-scale": 2
     }
   },
   {

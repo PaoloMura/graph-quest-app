@@ -259,25 +259,38 @@ class TestLabels(QTextInput):
         return ''
 
 
-class TestData(QTextInput):
+def generate_graph(n):
+    graph = nx.algorithms.bipartite.random_graph(n, n, 0.5, directed=False)
+    top = [n for n, d in graph.nodes(data=True) if d['bipartite'] == 0]
+    result = len(nx.algorithms.bipartite.maximum_matching(graph, top_nodes=top)) / 2
+    return graph, result
+
+
+class TestData(QEdgeSet):
     def __init__(self):
-        super().__init__(layout='force-directed')
-        self.labels = True
+        super().__init__(layout='tree',
+                         labels=True)
 
     def generate_data(self) -> list[nx.Graph]:
-        graph = nx.random_tree(8)
-        for node in graph.nodes:
-            graph.nodes[node]['data'] = [str(i) for i in range(random.randint(1, 4))]
+        graph = nx.random_tree(10)
+        # for node in graph.nodes:
+        #     graph.nodes[node]['data'] = [str(i) for i in range(random.randint(0, 4))]
+        # for u, v in graph.edges:
+        #     graph[u][v]['weight'] = random.randint(1, 10)
         return [graph]
 
     def generate_question(self, graphs: list[nx.Graph]) -> str:
         return 'This is a test for node data.'
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[str]:
-        return ['']
+    def generate_solutions(self, graphs: list[nx.Graph]) -> list[list[list[int, int]]]:
+        return [[[]]]
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: str) -> (bool, str):
+    def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
         return True, ''
+
+
+# class TestEditGraph(QEditGraph):
+#     pass
 
 
 if __name__ == '__main__':

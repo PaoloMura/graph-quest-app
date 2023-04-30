@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from constants import *
 import converter
 import copy
@@ -33,20 +35,18 @@ def load_question(file: str, qclass: str) -> Question:
         raise e
 
 
+def longest_path(graph: nx.Graph, root):
+    digraph = nx.DiGraph(edge for edge in nx.bfs_edges(graph, root))
+    return nx.algorithms.dag.dag_longest_path(digraph)
+
+
 def get_root(graph: nx.Graph):
-    # Only find the optimal root for very small graphs
-    if len(graph.nodes) > MAX_ROOTER:
-        return random.choice(list(graph.nodes))
-    longest = []
-    for start in graph.nodes:
-        for end in graph.nodes:
-            if start == end:
-                continue
-            path = sorted(nx.all_simple_paths(graph, start, end), reverse=True)[0]
-            if len(path) > len(longest):
-                longest = path
-    mid = len(longest) // 2
-    return longest[mid]
+    nodes = list(graph.nodes)
+    r1 = random.choice(nodes)
+    l1 = longest_path(graph, r1)
+    l2 = longest_path(graph, l1[-1])
+    mid = len(l2) // 2
+    return l2[mid]
 
 
 def generate_question(q_file: str, q_class: str) -> dict:
