@@ -114,7 +114,7 @@
     "style": {
       "underlay-opacity": 0.3,
       "underlay-color": "#00f",
-      "underlay-padding": 5
+      "underlay-padding": 10
     }
   },
   {

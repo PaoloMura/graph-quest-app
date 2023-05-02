@@ -1,81 +1,69 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { triggerGraphAction } from '../utilities/graph-events'
-import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { getSolution } from '../utilities/http'
-import Description from '../subcomponents/Description'
-import SubmitButton from '../generic/SubmitButton'
 
-export default function ASelectPath ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
-  const [answer, setAnswer] = useState(() => (
-    progress.answer !== undefined ? progress.answer : []
-  ))
+export const initialAnswer = (question) => []
 
-  useEffect(() => {
-    if (progress.answer !== undefined) setAnswer(progress.answer)
-    else setAnswer([])
-  }, [progress])
+export const controls = (question) => [
+  'Click on a vertex to select it.',
+  'Click on the last visited vertex/edge to remove it.'
+]
 
-  const controls = [
-    'Click on a vertex to select it.',
-    'Click on the last visited vertex/edge to remove it.'
-  ]
+export const validate = (question, answer) => {}
 
+export function verify (question, answer) {
+  const ans = answer.toString()
+  question.solutions.forEach(sol => {
+    if (sol.toString() === ans) {
+      return true
+    }
+  })
+  return false
+}
+
+export function onReset (question, answer) {
   const getEdge = (u, v) => {
     if (question.graphs[0].directed) return [u, v]
     else if (question.graphs[0].elements.edges.find(e => e[0] === u && e[1] === v)) return [u, v]
     else return [v, u]
   }
 
-  const handleReset = () => {
-    let prev
-    for (const vertex of answer) {
-      triggerGraphAction(
-        'highlightVertex',
-        { vertex, type: 'colour', highlight: false },
-        0
-      )
-      if (prev !== undefined) {
-        const [u, v] = getEdge(prev, vertex)
-        triggerGraphAction(
-          'highlightEdge',
-          { v1: u, v2: v, type: 'colour', highlight: false },
-          0
-        )
-      }
-      prev = vertex
+  let prev
+  for (const vertex of answer) {
+    let params = {
+      vertex,
+      type: 'colour',
+      highlight: false
     }
-    setAnswer([])
-  }
-
-  const handleSubmit = () => {
-    // Determine whether the answer is correct
-    const ans = answer.toString()
-    if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit, onSetQuestion)
-    } else {
-      for (const sol of question.solutions) {
-        if (sol.toString() === ans) {
-          onSubmit(answer, 'correct', '')
-          return
-        }
+    triggerGraphAction('highlightVertex', params, 0)
+    if (prev !== undefined) {
+      const [u, v] = getEdge(prev, vertex)
+      params = {
+        v1: u,
+        v2: v,
+        type: 'colour',
+        highlight: false
       }
-      onSubmit(answer, 'incorrect', '')
+      triggerGraphAction('highlightEdge', params, 0)
     }
+    prev = vertex
   }
+}
 
+export function Answer ({ question, answer, progress, setAnswer, setError }) {
   useEffect(() => {
     function addNode (value, graphKey) {
       setAnswer([...answer, value])
       if (answer.length > 0) {
         // Un-highlight the previous vertex
-        triggerGraphAction(
-          'highlightVertex',
-          { vertex: answer.at(-1), type: 'colour', highlight: false },
-          graphKey
-        )
+        let params = {
+          vertex: answer.at(-1),
+          type: 'colour',
+          highlight: false
+        }
+        triggerGraphAction('highlightVertex', params, graphKey)
         // Highlight the edge
-        const params = {
+        params = {
           v1: answer.at(-1),
           v2: value,
           type: 'colour',
@@ -84,28 +72,31 @@ export default function ASelectPath ({ question, onSetQuestion, progress, onSubm
         triggerGraphAction('highlightEdge', params, graphKey)
       }
       // Highlight this vertex
-      triggerGraphAction(
-        'highlightVertex',
-        { vertex: value, type: 'colour', highlight: true },
-        graphKey
-      )
+      const params = {
+        vertex: value,
+        type: 'colour',
+        highlight: true
+      }
+      triggerGraphAction('highlightVertex', params, graphKey)
     }
 
     function popNode (graphKey) {
       if (answer.length === 0) return
       // Un-highlight the current vertex
-      triggerGraphAction(
-        'highlightVertex',
-        { vertex: answer.at(-1), type: 'colour', highlight: false },
-        graphKey
-      )
+      const params = {
+        vertex: answer.at(-1),
+        type: 'colour',
+        highlight: false
+      }
+      triggerGraphAction('highlightVertex', params, graphKey)
       if (answer.length > 1) {
         // Highlight the previously selected vertex
-        triggerGraphAction(
-          'highlightVertex',
-          { vertex: answer.at(-2), type: 'colour', highlight: true },
-          graphKey
-        )
+        const params = {
+          vertex: answer.at(-2),
+          type: 'colour',
+          highlight: true
+        }
+        triggerGraphAction('highlightVertex', params, graphKey)
         // Un-highlight the current edge if it does not appear anywhere else in the answer
         const v1 = answer.at(-2)
         const v2 = answer.at(-1)
@@ -113,11 +104,13 @@ export default function ASelectPath ({ question, onSetQuestion, progress, onSubm
           return val === v1 && idx < answer.length - 2 && answer.at(idx + 1) === v2
         }
         if (answer.find(checkAdjacent) === undefined) {
-          triggerGraphAction(
-            'highlightEdge',
-            { v1, v2, type: 'colour', highlight: false },
-            graphKey
-          )
+          const params = {
+            v1,
+            v2,
+            type: 'colour',
+            highlight: false
+          }
+          triggerGraphAction('highlightEdge', params, graphKey)
         }
       }
       setAnswer(answer.slice(0, -1))
@@ -152,7 +145,6 @@ export default function ASelectPath ({ question, onSetQuestion, progress, onSubm
     }
 
     function handleTapNode (event) {
-      if (progress.status !== 'unanswered') return
       const vertex = event.detail.vertex
       // If clicking on the latest vertex or its predecessor, remove it
       if (answer.length > 0 && answer.at(-1) === vertex) popNode(event.detail.graphKey)
@@ -166,7 +158,6 @@ export default function ASelectPath ({ question, onSetQuestion, progress, onSubm
     }
 
     function handleTapEdge (event) {
-      if (progress.status !== 'unanswered') return
       const [v1, v2] = [event.detail.source, event.detail.target]
       if (answer.length > 1 &&
         (
@@ -183,65 +174,67 @@ export default function ASelectPath ({ question, onSetQuestion, progress, onSubm
       document.removeEventListener('tap_node', handleTapNode)
       document.removeEventListener('tap_edge', handleTapEdge)
     }
-  }, [answer, progress, question.graphs])
+  }, [answer, setAnswer, progress, question.graphs])
 
   useEffect(() => {
     if (progress.answer !== undefined && progress.answer.length > 0) {
       if (progress.answer.length > 1) {
         for (let i = 1; i < progress.answer.length; i++) {
-          triggerGraphAction(
-            'highlightEdge',
-            { v1: progress.answer[i - 1], v2: progress.answer[i], type: 'colour', highlight: true },
-            0
-          )
+          const params = {
+            v1: progress.answer[i - 1],
+            v2: progress.answer[i],
+            type: 'colour',
+            highlight: true
+          }
+          triggerGraphAction('highlightEdge', params, 0)
         }
       }
-      triggerGraphAction(
-        'highlightVertex',
-        { vertex: progress.answer.at(-1), type: 'colour', highlight: true },
-        0
-      )
+      const params = {
+        vertex: progress.answer.at(-1),
+        type: 'colour',
+        highlight: true
+      }
+      triggerGraphAction('highlightVertex', params, 0)
     }
   }, [progress])
 
-  if (progress.status === 'unanswered') {
-    return (
-      <div>
-        <Description description={question.description} controls={controls} />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answer.toString()}
-          />
-          <br />
-          <div className='d-grid gap-2'>
-            <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
-          </div>
-          <br />
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <Description description={question.description} />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answer.toString()}
-          />
-          <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
-            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
-          </p>
-          <p className='feedback'>
-            {progress.feedback}
-          </p>
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  }
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answer.toString()}
+    />
+  )
+}
+
+export function DisabledAnswer ({ question, answer, progress }) {
+  useEffect(() => {
+    if (progress.answer !== undefined && progress.answer.length > 0) {
+      if (progress.answer.length > 1) {
+        for (let i = 1; i < progress.answer.length; i++) {
+          const params = {
+            v1: progress.answer[i - 1],
+            v2: progress.answer[i],
+            type: 'colour',
+            highlight: true
+          }
+          triggerGraphAction('highlightEdge', params, 0)
+        }
+      }
+      const params = {
+        vertex: progress.answer.at(-1),
+        type: 'colour',
+        highlight: true
+      }
+      triggerGraphAction('highlightVertex', params, 0)
+    }
+  }, [progress])
+
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answer.toString()}
+    />
+  )
 }

@@ -1,35 +1,26 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Form from 'react-bootstrap/Form'
-import { getSolution } from '../utilities/http'
-import Description from '../subcomponents/Description'
-import SubmitButton from '../generic/SubmitButton'
 
-export default function AMultipleChoice ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
-  const [answer, setAnswer] = useState(() => {
-    if (progress.answer !== undefined) return progress.answer
-    else return question.solutions.map((txt, _) => [txt, false])
-  })
+export const initialAnswer = (question) => {
+  return question.solutions.map((txt, _) => [txt, false])
+}
 
-  useEffect(() => {
-    if (progress.answer !== undefined) setAnswer(progress.answer)
-    else setAnswer(question.solutions.map((txt, _) => [txt, false]))
-  }, [progress, question])
+export const controls = (question) => undefined
 
-  const handleSubmit = () => {
-    // Determine whether the answer is correct
-    if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit, onSetQuestion)
-    } else {
-      for (let i = 0; i < question.solutions.length; i++) {
-        if (question.solutions[i][1] !== answer[i][1]) {
-          onSubmit(answer, 'incorrect', '')
-          return
-        }
-      }
-      onSubmit(answer, 'correct', '')
+export const validate = (question, answer) => ''
+
+export function verify (question, answer) {
+  for (let i = 0; i < question.solutions.length; i++) {
+    if (question.solutions[i][1] !== answer[i][1]) {
+      return false
     }
   }
+  return true
+}
 
+export const onReset = (question, answer) => {}
+
+export function Answer ({ question, answer, progress, setAnswer, setError }) {
   const handleChangeAnswer = (event, key) => {
     setAnswer(answer.map((ans, idx) => {
       if (question.settings.single_selection) {
@@ -40,59 +31,40 @@ export default function AMultipleChoice ({ question, onSetQuestion, progress, on
     }))
   }
 
-  if (progress.status === 'unanswered') {
-    return (
-      <div>
-        <Description
-          description={question.description}
-        />
-        <Form>
-          {
-          answer.map((ans, idx) => {
-            return (
-              <Form.Check
-                key={ans[0]}
-                type={question.settings.single_selection ? 'radio' : 'checkbox'}
-                label={ans[0]}
-                checked={ans[1]}
-                onChange={(e) => handleChangeAnswer(e, idx)}
-              />
-            )
-          })
-        }
-          <br />
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <Description description={question.description} />
-        <Form>
-          {
-          answer.map(ans => {
-            return (
-              <Form.Check
-                key={ans[0]}
-                disabled
-                readOnly
-                type={question.settings.single_selection ? 'radio' : 'checkbox'}
-                label={ans[0]}
-                checked={ans[1]}
-              />
-            )
-          })
-        }
-          <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
-            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
-          </p>
-          <p className='feedback'>
-            {progress.feedback}
-          </p>
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  }
+  return (
+    <div>
+      {
+        answer.map((ans, idx) => (
+          <Form.Check
+            key={ans[0]}
+            type={question.settings.single_selection ? 'radio' : 'checkbox'}
+            label={ans[0]}
+            checked={ans[1]}
+            onChange={(e) => handleChangeAnswer(e, idx)}
+          />
+        ))
+      }
+    </div>
+  )
+}
+
+export function DisabledAnswer ({ question, answer, progress }) {
+  return (
+    <div>
+      {
+        answer.map(ans => {
+          return (
+            <Form.Check
+              key={ans[0]}
+              disabled
+              readOnly
+              type={question.settings.single_selection ? 'radio' : 'checkbox'}
+              label={ans[0]}
+              checked={ans[1]}
+            />
+          )
+        })
+      }
+    </div>
+  )
 }

@@ -198,6 +198,7 @@ function Teacher ({ token, removeToken, setToken }) {
   const handleCloseCode = () => setSelectedCode('0')
 
   useEffect(() => {
+    console.log('use effect')
     getContent()
   }, [getContent])
 

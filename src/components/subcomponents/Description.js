@@ -5,20 +5,20 @@ export default function Description ({ description, controls }) {
     <div>
       <h3>Description</h3>
       <p>{description}</p>
-      <br/>
+      <br />
       {
         controls !== undefined &&
-        <>
-          <h3>Controls</h3>
-          <ul>
-            {
+          <>
+            <h3>Controls</h3>
+            <ul>
+              {
               controls.map((control, idx) => (
                 <li key={idx}>{control}</li>
               ))
             }
-          </ul>
-          <br/>
-        </>
+            </ul>
+            <br />
+          </>
       }
     </div>
   )

@@ -69,8 +69,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
         ...layouts[user_settings.layout],
         roots: [user_settings.roots[myKey]]
       }
-      // layoutOptions = layouts[user_settings.layout]
-      console.log(layoutOptions)
     } else {
       layoutOptions = layouts[user_settings.layout]
     }
@@ -112,7 +110,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
       if (hn !== null && hn.includes(x)) {
         node.addClass('underlay')
       }
-      console.log('settings:', user_settings)
       if (user_settings.labels) node.addClass('label')
       const data = node.data('data')
       if (data?.length > 0) {
@@ -133,7 +130,6 @@ function Graph ({ myKey, settings, user_settings, data }) {
           })
         }
       }
-      console.log('classes:', node.classes())
     }
   }
 
@@ -321,9 +317,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
       if (!(edge === undefined)) {
         const type = event.detail.type
         if (event.detail.highlight) {
-          console.log('Adding class', type)
-          edge.addClass('colour')
-          console.log('Result:', edge.classes())
+          edge.addClass(type)
         } else edge.removeClass(type)
       }
     }

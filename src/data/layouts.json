@@ -15,7 +15,7 @@
   },
   "circle": {
     "name": "circle",
-    "padding": 30,
+    "padding": 40,
     "nodeDimensionsIncludeLabels": true
   },
   "grid": {

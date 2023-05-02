@@ -1,65 +1,51 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { triggerGraphAction } from '../utilities/graph-events'
-import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import Description from '../subcomponents/Description'
 import { equalSets } from '../utilities/sets'
-import { getSolution } from '../utilities/http'
-import SubmitButton from '../generic/SubmitButton'
 
-export default function AVertexSet ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
-  const [answer, setAnswer] = useState(() => (
-    progress.answer !== undefined ? progress.answer : []
-  ))
+export const initialAnswer = (question) => []
 
-  useEffect(() => {
-    if (progress.answer !== undefined) setAnswer(progress.answer)
-    else setAnswer([])
-  }, [progress])
-
-  const controls = [
-    'Click on a vertex to select/unselect it.'
-  ]
+export function controls (question) {
+  const ctr = ['Click on a vertex to select/unselect it.']
 
   if (question.settings.selection_limit > 1) {
-    controls.push('Click and drag to select/unselect multiple vertices.')
+    ctr.push('Click and drag to select/unselect multiple vertices.')
   }
 
   if (question.settings.selection_limit !== -1) {
-    controls.push(`You can select at most ${question.settings.selection_limit} vertices.`)
+    ctr.push(`You can select at most ${question.settings.selection_limit} vertices.`)
   }
 
-  const handleReset = () => {
-    for (const vertex of answer) {
-      triggerGraphAction(
-        'highlightVertex',
-        { vertex, type: 'colour', highlight: false },
-        0
-      )
-    }
-    setAnswer([])
-  }
+  return ctr
+}
 
-  const handleSubmit = () => {
-    // Determine whether the answer is correct
-    const ans = new Set(answer)
-    if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit, onSetQuestion)
-    } else {
-      for (const solution of question.solutions) {
-        const sol = new Set(solution)
-        if (equalSets(sol, ans)) {
-          onSubmit(answer, 'correct', '')
-          return
-        }
-      }
-      onSubmit(answer, 'incorrect', '')
+export const validate = (question, answer) => {}
+
+export function verify (question, answer) {
+  const ans = new Set(answer)
+  for (const solution of question.solutions) {
+    const sol = new Set(solution)
+    if (equalSets(sol, ans)) {
+      return true
     }
   }
+  return false
+}
 
+export function onReset (question, answer) {
+  answer.forEach(vertex => {
+    const params = {
+      vertex,
+      type: 'colour',
+      highlight: false
+    }
+    triggerGraphAction('highlightVertex', params, 0)
+  })
+}
+
+export function Answer ({ question, answer, progress, setAnswer, setError }) {
   useEffect(() => {
     function handleTapNode (event) {
-      if (progress.status !== 'unanswered') return
       const vertex = event.detail.vertex
       if (answer.includes(vertex)) {
         setAnswer(answer.filter(v => v !== vertex))
@@ -94,7 +80,6 @@ export default function AVertexSet ({ question, onSetQuestion, progress, onSubmi
     }
 
     function handleBoxEnd (event) {
-      if (progress.status !== 'unanswered') return
       const nodes = event.detail.nodes
       const numInAnswer = nodes.reduce((acc, n) => answer.includes(n) ? acc + 1 : acc, 0)
       if (numInAnswer === nodes.length) {
@@ -133,61 +118,49 @@ export default function AVertexSet ({ question, onSetQuestion, progress, onSubmi
       document.removeEventListener('tap_node', handleTapNode)
       document.removeEventListener('box_end', handleBoxEnd)
     }
-  }, [answer, progress, question.settings.selection_limit])
+  }, [answer, setAnswer, progress, question])
 
   useEffect(() => {
     if (progress.answer !== undefined && progress.answer.length > 0) {
-      for (const v of progress.answer) {
-        triggerGraphAction(
-          'highlightVertex',
-          { vertex: v, type: 'colour', highlight: true },
-          0
-        )
-      }
+      progress.answer.forEach(vertex => {
+        const params = {
+          vertex,
+          type: 'colour',
+          highlight: true
+        }
+        triggerGraphAction('highlightVertex', params, 0)
+      })
     }
   }, [progress])
 
-  if (progress.status === 'unanswered') {
-    return (
-      <div>
-        <Description
-          description={question.description}
-          controls={controls}
-        />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answer.toString()}
-          />
-          <br />
-          <div className='d-grid gap-2'>
-            <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
-          </div>
-          <br />
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <Description description={question.description} />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answer.toString()}
-          />
-          <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
-            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
-          </p>
-          <p className='feedback'>
-            {progress.feedback}
-          </p>
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  }
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answer.toString()}
+    />
+  )
+}
+
+export function DisabledAnswer ({ question, answer, progress }) {
+  useEffect(() => {
+    if (progress.answer !== undefined && progress.answer.length > 0) {
+      progress.answer.forEach(vertex => {
+        const params = {
+          vertex,
+          type: 'colour',
+          highlight: true
+        }
+        triggerGraphAction('highlightVertex', params, 0)
+      })
+    }
+  }, [progress])
+
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answer.toString()}
+    />
+  )
 }

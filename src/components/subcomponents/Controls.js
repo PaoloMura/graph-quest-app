@@ -1,27 +1,39 @@
 import React from 'react'
 
-function Control (props) {
+function Control ({ control, actions }) {
   return (
     <form>
-      <label>{props.control.title}</label>
+      <label>{control.title}</label>
       <select>
-        {props.actions.filter(option => !option.positional || props.control.positional)
-          .map(option => {
-            return (<option key={option.action}>{option.action}</option>)
-          })}
+        {
+          actions.filter(option => !option.positional || control.positional)
+            .map(option => {
+              return (
+                <option key={option.action}>
+                  {option.action}
+                </option>
+              )
+            })
+        }
       </select>
     </form>
   )
 }
 
-function Controls (props) {
+export default function Controls ({ controls, actions }) {
   return (
     <div>
-      {props.controls.map((item) => {
-        return (<Control key={item.title} control={item} actions={props.actions}/>)
-      })}
+      {
+        controls.map((item) => {
+          return (
+            <Control
+              key={item.title}
+              control={item}
+              actions={actions}
+            />
+          )
+        })
+      }
     </div>
   )
 }
-
-export default Controls

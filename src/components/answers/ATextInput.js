@@ -1,93 +1,55 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Form from 'react-bootstrap/Form'
-import { getSolution } from '../utilities/http'
-import Description from '../subcomponents/Description'
-import SubmitButton from '../generic/SubmitButton'
 
-export default function ATextInput ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
-  const [answer, setAnswer] = useState(() => (
-    progress.answer !== undefined ? progress.answer : ''
-  ))
-  const [error, setError] = useState('')
+export const initialAnswer = (question) => ''
 
-  useEffect(() => {
-    if (progress.answer !== undefined) setAnswer(progress.answer)
-    else setAnswer('')
-  }, [progress])
+export const controls = (question) => undefined
 
-  const validateAnswer = () => {
-    if (question.settings.data_type === 'integer') {
-      const parsed = Number(answer)
-      if (isNaN(parsed)) {
-        setError('Answer must be an integer')
-        return false
-      } else if (!Number.isInteger(parsed)) {
-        setError('Answer must be an integer')
-        return false
-      } else {
-        setAnswer(parsed.toString())
-        return true
-      }
-    }
-  }
-
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    // Validate the answer format
-    if (!validateAnswer()) return
-    // Determine whether the answer is correct
-    const ans = answer.toString()
-    if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit, onSetQuestion)
+export function validate (question, answer) {
+  if (question.settings.data_type === 'integer') {
+    const parsed = Number(answer)
+    if (isNaN(parsed)) {
+      return 'Answer must be an integer'
+    } else if (!Number.isInteger(parsed)) {
+      return 'Answer must be an integer'
     } else {
-      for (const sol of question.solutions) {
-        if (sol.toString() === ans) {
-          onSubmit(answer, 'correct', '')
-          return
-        }
-      }
-      onSubmit(answer, 'incorrect', '')
+      return ''
     }
   }
+}
 
+export function verify (question, answer) {
+  const ans = answer.toString()
+  for (const sol of question.solutions) {
+    if (sol.toString() === ans) {
+      return true
+    }
+  }
+  return false
+}
+
+export const onReset = (question, answer) => {}
+
+export function Answer ({ question, answer, progress, setAnswer, setError }) {
   const handleChangeAnswer = (event) => {
     setAnswer(event.target.value)
     setError('')
   }
 
-  if (progress.status === 'unanswered') {
-    return (
-      <div>
-        <Description description={question.description} />
-        <Form.Control
-          value={answer}
-          onChange={handleChangeAnswer}
-        />
-        <br />
-        <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        <br />
-        {error !== '' && <Form.Text muted>{error}</Form.Text>}
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <Description description={question.description} />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answer}
-          />
-          <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
-            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
-          </p>
-          <p className='feedback'>
-            {progress.feedback}
-          </p>
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  }
+  return (
+    <Form.Control
+      value={answer}
+      onChange={handleChangeAnswer}
+    />
+  )
+}
+
+export function DisabledAnswer ({ question, answer, progress }) {
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answer.toString()}
+    />
+  )
 }

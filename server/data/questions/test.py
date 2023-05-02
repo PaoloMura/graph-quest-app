@@ -266,26 +266,38 @@ def generate_graph(n):
     return graph, result
 
 
-class TestData(QEdgeSet):
+class TestData(QTextInput):
     def __init__(self):
-        super().__init__(layout='tree',
-                         labels=True)
+        super().__init__(layout='circle',
+                         labels=True,
+                         feedback=True)
 
     def generate_data(self) -> list[nx.Graph]:
-        graph = nx.random_tree(10)
+        # graph = nx.random_tree(10)
+        graph = nx.gnp_random_graph(8, 0.5)
         # for node in graph.nodes:
         #     graph.nodes[node]['data'] = [str(i) for i in range(random.randint(0, 4))]
         # for u, v in graph.edges:
         #     graph[u][v]['weight'] = random.randint(1, 10)
         return [graph]
 
+        # n = random.randint(4, 5)
+        # p = random.choice(range(n - 2, n))
+        #
+        # graph, result = generate_graph(n)
+        # while result != p:
+        #     graph, result = generate_graph(n)
+        #
+        # return [graph]
+
     def generate_question(self, graphs: list[nx.Graph]) -> str:
         return 'This is a test for node data.'
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[list[list[int, int]]]:
-        return [[[]]]
+    def generate_solutions(self, graphs: list[nx.Graph]) -> list[str]:
+        return ['']
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
+    def generate_feedback(self, graphs: list[nx.Graph], answer: str) -> (bool, str):
+        self.highlighted_nodes = list(graphs[0].nodes)
         return True, ''
 
 

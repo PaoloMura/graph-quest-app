@@ -169,3 +169,7 @@ td {
     padding: 8px;
     border-radius: 8px;
 }
+
+.reset-button {
+    margin: 12px 0
+}

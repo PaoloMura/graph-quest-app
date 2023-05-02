@@ -1,70 +1,49 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { triggerGraphAction } from '../utilities/graph-events'
-import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { equalSets } from '../utilities/sets'
-import { getSolution } from '../utilities/http'
-import Description from '../subcomponents/Description'
-import SubmitButton from '../generic/SubmitButton'
+import { equalNestedSets } from '../utilities/sets'
 
-export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit, onNext, submitStatus }) {
-  const [answer, setAnswer] = useState(() => (
-    progress.answer !== undefined ? progress.answer : []
-  ))
+export const initialAnswer = (question) => []
 
-  useEffect(() => {
-    if (progress.answer !== undefined) setAnswer(progress.answer)
-    else setAnswer([])
-  }, [progress])
-
-  const controls = [
+export function controls (question) {
+  const ctr = [
     'Click on an edge to select/unselect it.',
     'Click and drag to select/unselect multiple edges.'
   ]
+
   if (question.settings.selection_limit !== -1) {
-    controls.push(`You can select at most ${question.settings.selection_limit} edges`)
+    ctr.push(`You can select at most ${question.settings.selection_limit} edges`)
   }
 
-  const handleReset = () => {
-    for (const [source, target] of answer) {
-      triggerGraphAction(
-        'highlightEdge',
-        { v1: source, v2: target, type: 'colour', highlight: false },
-        0
-      )
+  return ctr
+}
+
+export const validate = (question, answer) => {}
+
+export function verify (question, answer) {
+  const ans = new Set(answer.map(edge => new Set(edge)))
+  for (const solution of question.solutions) {
+    const sol = new Set(solution.map(edge => new Set(edge)))
+    if (equalNestedSets(sol, ans)) {
+      return true
     }
-    setAnswer([])
   }
+  return false
+}
 
-  const equalNestedSets = (xs, ys) => {
-    if (xs.size !== ys.size) return false
-    for (const x of xs) {
-      for (const y of ys) {
-        if (equalSets(x, y)) return true
-      }
+export function onReset (question, answer) {
+  for (const [source, target] of answer) {
+    const params = {
+      v1: source,
+      v2: target,
+      type: 'colour',
+      highlight: false
     }
-    return false
+    triggerGraphAction('highlightEdge', params, 0)
   }
+}
 
-  const answerInSolutions = () => {
-    const ans = new Set(answer.map(edge => new Set(edge)))
-    for (const solution of question.solutions) {
-      const sol = new Set(solution.map(edge => new Set(edge)))
-      if (equalNestedSets(sol, ans)) {
-        return true
-      }
-    }
-    return false
-  }
-
-  const handleSubmit = () => {
-    // Determine whether the answer is correct
-    if (question.settings.feedback) {
-      getSolution(question, answer, onSubmit, onSetQuestion)
-    } else if (answerInSolutions()) onSubmit(answer, 'correct', '')
-    else onSubmit(answer, 'incorrect', '')
-  }
-
+export function Answer ({ question, answer, progress, setAnswer, setError }) {
   useEffect(() => {
     const edgeInAnswer = (edge, graphKey) => {
       const [u, v] = edge
@@ -99,32 +78,37 @@ export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit,
     }
 
     function handleTapEdge (event) {
-      if (progress.status !== 'unanswered') return
       const source = event.detail.source
       const target = event.detail.target
 
       if (edgeInAnswer([source, target], event.detail.graphKey)) {
         setAnswer(answer.filter((e) => edgesDifferent(e, [source, target], event.detail.graphKey)))
-        triggerGraphAction(
-          'highlightEdge',
-          { v1: source, v2: target, type: 'colour', highlight: false },
-          event.detail.graphKey
-        )
+        const params = {
+          v1: source,
+          v2: target,
+          type: 'colour',
+          highlight: false
+        }
+        triggerGraphAction('highlightEdge', params, event.detail.graphKey)
       } else {
         const limit = question.settings.selection_limit
         if (limit === -1 || limit === 1 || answer.length < limit) {
           setAnswer([...answer, [source, target]])
-          triggerGraphAction(
-            'highlightEdge',
-            { v1: source, v2: target, type: 'colour', highlight: true },
-            event.detail.graphKey
-          )
+          const params = {
+            v1: source,
+            v2: target,
+            type: 'colour',
+            highlight: true
+          }
+          triggerGraphAction('highlightEdge', params, event.detail.graphKey)
           if (limit === 1 && answer.length === 1) {
-            triggerGraphAction(
-              'highlightEdge',
-              { v1: answer[0][0], v2: answer[0][1], type: 'colour', highlight: false },
-              event.detail.graphKey
-            )
+            const params = {
+              v1: answer[0][0],
+              v2: answer[0][1],
+              type: 'colour',
+              highlight: false
+            }
+            triggerGraphAction('highlightEdge', params, event.detail.graphKey)
             setAnswer([[source, target]])
           } else {
             setAnswer([...answer, [source, target]])
@@ -134,7 +118,6 @@ export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit,
     }
 
     function handleBoxEnd (event) {
-      if (progress.status !== 'unanswered') return
       const edges = event.detail.edges
       const numInAnswer = edges.reduce((acc, e) => {
         return edgeInAnswer(e, event.detail.graphKey) ? acc + 1 : acc
@@ -142,11 +125,13 @@ export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit,
       if (numInAnswer === edges.length) {
         // Un-highlight all and remove them from answer
         for (const e of edges) {
-          triggerGraphAction(
-            'highlightEdge',
-            { v1: e[0], v2: e[1], type: 'colour', highlight: false },
-            event.detail.graphKey
-          )
+          const params = {
+            v1: e[0],
+            v2: e[1],
+            type: 'colour',
+            highlight: false
+          }
+          triggerGraphAction('highlightEdge', params, event.detail.graphKey)
         }
         setAnswer(answer.filter(e => !edgeInArray(e, edges)))
       } else {
@@ -155,11 +140,13 @@ export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit,
         if (question.settings.selection_limit === -1 ||
           answer.length + missing.length <= question.settings.selection_limit) {
           for (const m of missing) {
-            triggerGraphAction(
-              'highlightEdge',
-              { v1: m[0], v2: m[1], type: 'colour', highlight: true },
-              event.detail.graphKey
-            )
+            const params = {
+              v1: m[0],
+              v2: m[1],
+              type: 'colour',
+              highlight: true
+            }
+            triggerGraphAction('highlightEdge', params, event.detail.graphKey)
           }
           setAnswer(answer.concat(missing))
         }
@@ -173,68 +160,57 @@ export default function AEdgeSet ({ question, onSetQuestion, progress, onSubmit,
       document.removeEventListener('tap_edge', handleTapEdge)
       document.removeEventListener('box_end', handleBoxEnd)
     }
-  }, [answer, progress, question])
+  }, [answer, setAnswer, progress, question])
 
   useEffect(() => {
     if (progress.answer !== undefined && progress.answer.length > 0) {
       for (const [u, v] of progress.answer) {
-        triggerGraphAction(
-          'highlightEdge',
-          { v1: u, v2: v, type: 'colour', highlight: true },
-          0
-        )
+        const params = {
+          v1: u,
+          v2: v,
+          type: 'colour',
+          highlight: true
+        }
+        triggerGraphAction('highlightEdge', params, 0)
       }
     }
   }, [progress])
 
-  const answerToString = () => {
-    const edges = answer.map(([u, v], _) => `(${u},${v})`)
-    return edges.join(',')
-  }
+  const edges = answer.map(([u, v], _) => `(${u},${v})`)
+  const answerStr = edges.join(',')
 
-  if (progress.status === 'unanswered') {
-    return (
-      <div>
-        <Description
-          description={question.description}
-          controls={controls}
-        />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answerToString()}
-          />
-          <br />
-          <div className='d-grid gap-2'>
-            <Button size='lg' variant='secondary' onClick={handleReset}>Reset</Button>
-          </div>
-          <br />
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  } else {
-    return (
-      <div>
-        <Description
-          description={question.description}
-        />
-        <Form>
-          <Form.Control
-            disabled
-            readOnly
-            value={answerToString()}
-          />
-          <p className={progress.status === 'correct' ? 'text-correct' : 'text-incorrect'}>
-            {progress.status === 'correct' ? 'Correct!' : 'Incorrect.'}
-          </p>
-          <p className='feedback'>
-            {progress.feedback}
-          </p>
-          <SubmitButton onSubmit={handleSubmit} onNext={onNext} submitStatus={submitStatus} />
-        </Form>
-      </div>
-    )
-  }
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answerStr}
+    />
+  )
+}
+
+export function DisabledAnswer ({ question, answer, progress }) {
+  useEffect(() => {
+    if (progress.answer !== undefined && progress.answer.length > 0) {
+      for (const [u, v] of progress.answer) {
+        const params = {
+          v1: u,
+          v2: v,
+          type: 'colour',
+          highlight: true
+        }
+        triggerGraphAction('highlightEdge', params, 0)
+      }
+    }
+  }, [progress])
+
+  const edges = answer.map(([u, v], _) => `(${u},${v})`)
+  const answerStr = edges.join(',')
+
+  return (
+    <Form.Control
+      disabled
+      readOnly
+      value={answerStr}
+    />
+  )
 }
