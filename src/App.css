@@ -63,7 +63,7 @@ h1.logo {
     height: 60vh;
     margin: auto;
     display: block;
-    border-style: solid;
+    /*border-style: solid;*/
 }
 
 .topic-area {
