@@ -325,8 +325,8 @@ function Graph ({ myKey, settings, user_settings, data }) {
     function handleResize () {
       const width = window.innerWidth
       let padding
-      if (width < 768) padding = 150
-      else padding = 30
+      if (width < 768) padding = 200
+      else padding = 50
       cy.fit({ padding })
     }
 

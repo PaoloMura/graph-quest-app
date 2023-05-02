@@ -3,36 +3,37 @@
     "name": "cola",
     "animate": true,
     "infinite": false,
-    "edgeLength": 100,
+    "edgeLength": 200,
     "centerGraph": false,
-    "padding": 40,
+    "padding": 50,
     "fit": true,
     "nodeSpacing": 50,
     "avoidOverlap": true,
     "nodeDimensionsIncludeLabels": true,
     "handleDisconnected": true,
-    "randomize": false
+    "randomize": false,
+    "allConstIter": 1000
   },
   "circle": {
     "name": "circle",
-    "padding": 40,
+    "padding": 50,
     "nodeDimensionsIncludeLabels": true
   },
   "grid": {
     "name": "grid",
-    "padding": 30,
+    "padding": 40,
     "nodeDimensionsIncludeLabels": true
   },
   "bipartite": {
     "name": "grid",
-    "padding": 10,
+    "padding": 20,
     "nodeDimensionsIncludeLabels": true,
     "cols": 2
   },
   "tree": {
     "name": "breadthfirst",
     "fit": true,
-    "padding": 30,
+    "padding": 40,
     "nodeDimensionsIncludeLabels": true
   }
 }

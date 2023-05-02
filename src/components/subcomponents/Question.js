@@ -42,13 +42,12 @@ export default function Question ({ question, progress, onSubmit, onNext, submit
   } else {
     const fullProps = { question, progress, onSubmit, onNext, submitStatus, ...props }
     return (
-      <div>
-        <Container>
-          <Row>
-            {question.graphs.length > 0 &&
-              <Col xs={12} md={7}>
-                <Row className='Graph-area'>
-                  {
+      <div className='question-area'>
+        <Row>
+          {question.graphs.length > 0 &&
+            <Col xs={12} md={7}>
+              <Row className='Graph-area'>
+                {
                     question.graphs.map((graph, idx) => (
                       <Col key={idx}>
                         <h2>G{idx + 1}</h2>
@@ -61,13 +60,12 @@ export default function Question ({ question, progress, onSubmit, onNext, submit
                       </Col>
                     ))
                   }
-                </Row>
-              </Col>}
-            <Col className={answerClass}>
-              <QuestionPanel {...fullProps} />
-            </Col>
-          </Row>
-        </Container>
+              </Row>
+            </Col>}
+          <Col className={answerClass}>
+            <QuestionPanel {...fullProps} />
+          </Col>
+        </Row>
       </div>
     )
   }

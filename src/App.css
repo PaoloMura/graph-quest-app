@@ -63,12 +63,16 @@ h1.logo {
     height: 60vh;
     margin: auto;
     display: block;
-    /*border-style: solid;*/
+    border-style: solid;
 }
 
 .topic-area {
     margin-top: 15px;
     font-size: 1.3rem;
+}
+
+.question-area {
+    margin: 0 10px;
 }
 
 .answer-area {

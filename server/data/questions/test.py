@@ -268,15 +268,15 @@ def generate_graph(n):
 
 class TestData(QTextInput):
     def __init__(self):
-        super().__init__(layout='circle',
+        super().__init__(layout='force-directed',
                          labels=True,
                          feedback=True)
 
     def generate_data(self) -> list[nx.Graph]:
         # graph = nx.random_tree(10)
-        graph = nx.gnp_random_graph(8, 0.5)
-        # for node in graph.nodes:
-        #     graph.nodes[node]['data'] = [str(i) for i in range(random.randint(0, 4))]
+        graph = nx.gnp_random_graph(8, 0.3)
+        for node in graph.nodes:
+            graph.nodes[node]['data'] = [str(i) for i in range(random.randint(0, 4))]
         # for u, v in graph.edges:
         #     graph[u][v]['weight'] = random.randint(1, 10)
         return [graph]
