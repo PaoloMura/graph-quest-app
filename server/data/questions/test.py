@@ -78,20 +78,20 @@ class TestVertexSet(QVertexSet):
     def __init__(self):
         super().__init__()
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         n = random.randint(5, 10)
         p = 0.4
         graph = nx.gnp_random_graph(n, p, seed=None, directed=False)
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return "Select all vertices with degree > 2"
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[[int]]:
-        solution = [n for (n, d) in graphs[0].degree if d > 2]
+    def generate_solutions(self, graph: nx.Graph) -> list[[int]]:
+        solution = [n for (n, d) in graph.degree if d > 2]
         return [solution]
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, answer: list[int]) -> (bool, str):
         return ""
 
 
@@ -99,20 +99,20 @@ class TestSelectVertex(QVertexSet):
     def __init__(self):
         super().__init__(selection_limit=1)
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         n = random.randint(5, 10)
         p = 0.4
         graph = nx.gnp_random_graph(n, p, seed=None, directed=False)
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return "Select a vertex that has exactly two neighbours"
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[[int]]:
-        solution = [[n] for (n, d) in graphs[0].degree if d == 2]
+    def generate_solutions(self, graph: nx.Graph) -> list[[int]]:
+        solution = [[n] for (n, d) in graph.degree if d == 2]
         return solution
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, answer: list[int]) -> (bool, str):
         return ""
 
 
@@ -120,23 +120,23 @@ class TestDiGraph(QSelectPath):
     def __init__(self):
         super().__init__()
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         n = 5
         graph = nx.random_k_out_graph(n, 2, 2, self_loops=False)
         while not nx.has_path(graph, 0, n - 1):
             graph = nx.random_k_out_graph(n, 2, 2, self_loops=False)
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         n = len(list(graphs[0].nodes)) - 1
         return f"Find a simple path in the graph from v0 to v{n}"
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[list[int]]:
-        n = len(list(graphs[0].nodes)) - 1
-        solutions = nx.all_simple_paths(graphs[0], 0, n)
+    def generate_solutions(self, graph: nx.Graph) -> list[list[int]]:
+        n = len(list(graph.nodes)) - 1
+        solutions = nx.all_simple_paths(graph, 0, n)
         return list(solutions)
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, answer: list[int]) -> (bool, str):
         return ''
 
 
@@ -144,23 +144,23 @@ class TestWeighted(QEdgeSet):
     def __init__(self):
         super().__init__(selection_limit=1, layout='circle')
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         n = random.randint(5, 10)
         p = 0.4
         graph = nx.gnp_random_graph(n, p, seed=None, directed=False)
         for u, v, d in graph.edges(data=True):
             d['weight'] = round(random.random(), 2)
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return "Select an edge with weight < 0.5"
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[list[list[int, int]]]:
-        solutions = [[[u, v]] for u, v, d in graphs[0].edges(data=True) if d['weight'] < 0.5] + \
-                    [[[v, u]] for u, v, d in graphs[0].edges(data=True) if d['weight'] < 0.5]
+    def generate_solutions(self, graph: nx.Graph) -> list[list[list[int, int]]]:
+        solutions = [[[u, v]] for u, v, d in graph.edges(data=True) if d['weight'] < 0.5] + \
+                    [[[v, u]] for u, v, d in graph.edges(data=True) if d['weight'] < 0.5]
         return solutions
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[list[int, int]]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, answer: list[list[int, int]]) -> (bool, str):
         return ''
 
 
@@ -196,7 +196,7 @@ class TestMatching(QEdgeSet):
     def __init__(self):
         super().__init__(layout='bipartite', feedback=True)
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         graph = nx.Graph()
 
         # Add 2 * n nodes to the graph (each partition has n nodes).
@@ -215,15 +215,15 @@ class TestMatching(QEdgeSet):
                 edges.append(edge)
         graph.add_edges_from(edges)
 
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return "Find a maximum matching in the graph."
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[list[list[int, int]]]:
+    def generate_solutions(self, graph: nx.Graph) -> list[list[list[int, int]]]:
         return [[[0, 0]]]
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[list[int, int]]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, answer: list[list[int, int]]) -> (bool, str):
         top_selected = []
         bottom_selected = []
 
@@ -232,9 +232,9 @@ class TestMatching(QEdgeSet):
                 return False, 'Two edges cannot share a vertex!'
             top_selected.append(u)
             bottom_selected.append(v)
-            graphs[0].remove_edge(u, v)
+            graph.remove_edge(u, v)
 
-        for (u, v) in graphs[0].edges:
+        for (u, v) in graph.edges:
             if u not in top_selected and v not in bottom_selected:
                 return False, f'There is at least one more edge that can be added! ({u}, {v})'
 
@@ -269,16 +269,18 @@ def generate_graph(n):
 class TestData(QTextInput):
     def __init__(self):
         super().__init__(layout='force-directed',
-                         labels=True,
+                         labels=False,
                          feedback=True)
 
     def generate_data(self) -> list[nx.Graph]:
         # graph = nx.random_tree(10)
-        graph = nx.gnp_random_graph(8, 0.3)
+        # graph = nx.gn_graph(8)
+        graph = random_planar_graph(6, True, 1)
+        # graph = nx.gnp_random_graph(8, 0.3)
         for node in graph.nodes:
-            graph.nodes[node]['data'] = [str(i) for i in range(random.randint(0, 4))]
-        # for u, v in graph.edges:
-        #     graph[u][v]['weight'] = random.randint(1, 10)
+            graph.nodes[node]['data'] = str(node)
+        for u, v in graph.edges:
+            graph[u][v]['weight'] = random.randint(1, 10)
         return [graph]
 
         # n = random.randint(4, 5)

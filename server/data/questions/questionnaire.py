@@ -8,8 +8,8 @@ class EulerWalk(QSelectPath):
     def __init__(self):
         super().__init__(feedback=True, layout='circle')
 
-    def generate_data(self) -> list[nx.Graph]:
-        n = randint(7, 9)
+    def generate_data(self) -> nx.Graph:
+        n = random.randint(7, 9)
         p = 2 / n
         graph = nx.gnp_random_graph(n, p, seed=None, directed=False)
 
@@ -19,9 +19,9 @@ class EulerWalk(QSelectPath):
         while not_eulerian() or not nx.is_connected(graph):
             graph = nx.gnp_random_graph(n, p, seed=None, directed=False)
 
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return "Find an Euler walk in the graph."
 
     def __dfs(self, graph: nx.Graph, source: int, visited: list[tuple[int, int]], path: list[int]) -> list[list[int]]:
@@ -48,18 +48,18 @@ class EulerWalk(QSelectPath):
             path.pop()
         return results
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[list[int]]:
+    def generate_solutions(self, graph: nx.Graph) -> list[list[int]]:
         solutions = list()
-        for source in graphs[0].nodes:
-            solution = self.__dfs(graphs[0], source, [], [source])
+        for source in graph.nodes:
+            solution = self.__dfs(graph, source, [], [source])
             for r in solution:
                 if r not in solutions:
                     solutions.append(r)
         return solutions
 
-    def generate_feedback(self, graphs: list[nx.Graph], solution: list[int]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, solution: list[int]) -> (bool, str):
         correct = True
-        graph = graphs[0].copy()
+        graph = graph.copy()
         for i in range(len(solution) - 1):
             v1 = solution[i]
             v2 = solution[i + 1]
@@ -72,7 +72,7 @@ class EulerWalk(QSelectPath):
         if correct:
             return True, "You found a valid Euler walk."
         else:
-            path = list(nx.eulerian_path(graphs[0]))
+            path = list(nx.eulerian_path(graph))
             result = list(map(lambda x: x[0], path)) + [path[-1][1]]
             return False, f'This is not a valid Euler Walk.\n\nOne possible solution is:\n\n{result}'
 
@@ -104,8 +104,7 @@ class MinSpanTree(QMultipleChoice):
 
     def generate_data(self) -> list[nx.Graph]:
         # With probability 1/5, choose a disconnected graph.
-        # want_connected = random.random() > 0.2
-        want_connected = False
+        want_connected = random.random() > 0.2
 
         # Generate the random graph.
         if want_connected:
@@ -186,32 +185,32 @@ class DFS(QVertexSet):
     def __init__(self):
         super().__init__(node_prefix='v', label_style='math', selection_limit=1, feedback=True)
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         n = random.randint(8, 10)
         p = 0.3
         graph = random_planar_graph(n, connected=True, s=p)
         # graph = nx.gnp_random_graph(n=n, p=p, directed=False)
         # while not nx.is_connected(graph):
         #     graph = nx.gnp_random_graph(n=n, p=p, directed=False)
-        return [graph]
+        return graph
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return 'Consider a depth-first search in the graph G1 starting from vertex 0.\n\n' \
                'Which vertex will be explored sixth? Select the vertex on the graph.\n\n' \
                'Assume that whenever the search has a choice of two or more vertices to visit next, ' \
                'it picks the vertex with lowest number first.'
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[[int]]:
-        self.data, _ = dfs(graphs[0])
+    def generate_solutions(self, graph: nx.Graph) -> list[[int]]:
+        self.data, _ = dfs(graph)
         return [[self.data[5]]]
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: list[int]) -> (bool, str):
+    def generate_feedback(self, graph: nx.Graph, answer: list[int]) -> (bool, str):
         if not answer:
             return False, 'Answer must not be blank.'
         if self.data[5] == answer[0]:
             return True, ''
         else:
-            _, self.highlighted_edges = dfs(graphs[0])
+            _, self.highlighted_edges = dfs(graph)
             return False, f'The complete traversal would be {self.data},' \
                           f'giving {self.data[5]} as the sixth vertex visited.'
 

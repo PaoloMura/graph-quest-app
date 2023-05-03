@@ -1,6 +1,4 @@
 import copy
-import sys
-
 import converter
 from constants import *
 from datetime import datetime, timedelta, timezone
@@ -12,9 +10,9 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
     jwt_required,
     JWTManager)
+from graphquest.question import QVertexSet, QEdgeSet, QSelectPath
 import json
 import os
-from pprint import pprint
 import random
 from resources import delete_topic, update_topic, get_topic, get_questions, delete_file, upload_file
 from server import load_question, generate_question, test_new_file
@@ -201,8 +199,13 @@ def get_feedback(q_file, q_class):
     try:
         # Parse the request JSON
         answer = request.json.get('answer')
+
         graphs_json = request.json.get('graphs')
         graphs = [converter.cy2nx(g) for g in graphs_json]
+        graphs = copy.deepcopy(graphs)
+        if type(q).__bases__[0].__name__ in ['QVertexSet', 'QEdgeSet', 'QSelectPath']:
+            graphs = graphs[0]
+
         data = request.json.get('data')
         q.data = data
     except Exception as e:
@@ -210,7 +213,7 @@ def get_feedback(q_file, q_class):
 
     try:
         # Generate the feedback
-        result, feedback = q.generate_feedback(copy.deepcopy(graphs), copy.deepcopy(answer))
+        result, feedback = q.generate_feedback(graphs, copy.deepcopy(answer))
         return {
             'result': result,
             'feedback': feedback,
