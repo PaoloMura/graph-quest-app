@@ -7,3 +7,6 @@ The accompanying Python package can be found at https://github.com/PaoloMura/gra
 Find the `graphquest` documentation at https://graphquest.readthedocs.io/en/latest/.
 
 See the README under `server/` for detailed installation and deployment instructions.
+
+Title font designed using "Rise of Kingdom" by Vladimir Nikolic, 
+accessed at: https://www.fontspace.com/rise-of-kingdom-font-f27732.
