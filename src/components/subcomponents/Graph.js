@@ -106,8 +106,8 @@ function Graph ({ myKey, settings, user_settings, data }) {
   function setNodeClasses () {
     const hn = user_settings.highlighted_nodes
     for (const node of cy.nodes()) {
-      const x = node.data('value')
-      if (hn !== null && hn.includes(x)) {
+      const v = node.data('value')
+      if (hn !== null && hn.includes(v)) {
         node.addClass('underlay')
       }
       if (user_settings.labels) node.addClass('label')
@@ -115,21 +115,31 @@ function Graph ({ myKey, settings, user_settings, data }) {
       if (data?.length > 0) {
         (data.length === 1) ? node.addClass('blank') : node.addClass('box')
         for (let i = 0; i < data.length; i++) {
-          cy.add({
+          const childData = {
+            id: node.data('id') + ':' + i,
+            parent: node.data('id'),
+            label: data[i],
+            value: node.data('value')
+          }
+          if (node.data('colour') !== null) {
+            childData.colour = node.data('colour')
+          }
+          const childNode = cy.add({
             group: 'nodes',
-            data: {
-              id: node.data('id') + ':' + i,
-              parent: node.data('id'),
-              label: data[i]
-            },
+            data: childData,
             position: {
               x: i * Math.max(30, 18 * data[i].length),
               y: 200
             },
             classes: ['label', (data.length === 1) ? 'ring' : 'blank']
           })
+          if (childNode.data('colour') !== null) {
+            childNode.addClass('colour')
+          }
         }
       }
+      const c = node.data('colour')
+      if (c !== null) node.addClass('colour')
     }
   }
 
@@ -300,6 +310,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
 
     function highlightVertex (event) {
       if (event.detail.graphKey !== myKey) return
+      console.log(event.detail.vertex)
       const vertex = cy.nodes('[id = "' + event.detail.vertex + '"]')[0]
       const type = event.detail.type
       if (event.detail.highlight) vertex.addClass(type)

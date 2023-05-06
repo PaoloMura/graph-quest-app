@@ -32,7 +32,7 @@ export function onReset (question, answer) {
   for (const vertex of answer) {
     let params = {
       vertex,
-      type: 'colour',
+      type: 'overlay',
       highlight: false
     }
     triggerGraphAction('highlightVertex', params, 0)
@@ -41,7 +41,7 @@ export function onReset (question, answer) {
       params = {
         v1: u,
         v2: v,
-        type: 'colour',
+        type: 'overlay',
         highlight: false
       }
       triggerGraphAction('highlightEdge', params, 0)
@@ -58,7 +58,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         // Un-highlight the previous vertex
         let params = {
           vertex: answer.at(-1),
-          type: 'colour',
+          type: 'overlay',
           highlight: false
         }
         triggerGraphAction('highlightVertex', params, graphKey)
@@ -66,7 +66,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         params = {
           v1: answer.at(-1),
           v2: value,
-          type: 'colour',
+          type: 'overlay',
           highlight: true
         }
         triggerGraphAction('highlightEdge', params, graphKey)
@@ -74,7 +74,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
       // Highlight this vertex
       const params = {
         vertex: value,
-        type: 'colour',
+        type: 'overlay',
         highlight: true
       }
       triggerGraphAction('highlightVertex', params, graphKey)
@@ -85,7 +85,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
       // Un-highlight the current vertex
       const params = {
         vertex: answer.at(-1),
-        type: 'colour',
+        type: 'overlay',
         highlight: false
       }
       triggerGraphAction('highlightVertex', params, graphKey)
@@ -93,7 +93,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         // Highlight the previously selected vertex
         const params = {
           vertex: answer.at(-2),
-          type: 'colour',
+          type: 'overlay',
           highlight: true
         }
         triggerGraphAction('highlightVertex', params, graphKey)
@@ -107,7 +107,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
           const params = {
             v1,
             v2,
-            type: 'colour',
+            type: 'overlay',
             highlight: false
           }
           triggerGraphAction('highlightEdge', params, graphKey)
@@ -183,7 +183,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
           const params = {
             v1: progress.answer[i - 1],
             v2: progress.answer[i],
-            type: 'colour',
+            type: 'overlay',
             highlight: true
           }
           triggerGraphAction('highlightEdge', params, 0)
@@ -191,7 +191,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
       }
       const params = {
         vertex: progress.answer.at(-1),
-        type: 'colour',
+        type: 'overlay',
         highlight: true
       }
       triggerGraphAction('highlightVertex', params, 0)
@@ -215,7 +215,7 @@ export function DisabledAnswer ({ question, answer, progress }) {
           const params = {
             v1: progress.answer[i - 1],
             v2: progress.answer[i],
-            type: 'colour',
+            type: 'overlay',
             highlight: true
           }
           triggerGraphAction('highlightEdge', params, 0)
@@ -223,7 +223,7 @@ export function DisabledAnswer ({ question, answer, progress }) {
       }
       const params = {
         vertex: progress.answer.at(-1),
-        type: 'colour',
+        type: 'overlay',
         highlight: true
       }
       triggerGraphAction('highlightVertex', params, 0)

@@ -18,7 +18,7 @@ highlightVertex (vertex: int,
                  graphKey: int)
 highlightEdge (v1: int,
                v2: int,
-               type: 'colour' | 'underlay',
+               type: 'underlay' | 'overlay',
                highlight: bool,
                graphKey: int)
  */

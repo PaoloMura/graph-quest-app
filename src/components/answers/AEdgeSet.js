@@ -36,7 +36,7 @@ export function onReset (question, answer) {
     const params = {
       v1: source,
       v2: target,
-      type: 'colour',
+      type: 'overlay',
       highlight: false
     }
     triggerGraphAction('highlightEdge', params, 0)
@@ -86,7 +86,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         const params = {
           v1: source,
           v2: target,
-          type: 'colour',
+          type: 'overlay',
           highlight: false
         }
         triggerGraphAction('highlightEdge', params, event.detail.graphKey)
@@ -97,7 +97,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
           const params = {
             v1: source,
             v2: target,
-            type: 'colour',
+            type: 'overlay',
             highlight: true
           }
           triggerGraphAction('highlightEdge', params, event.detail.graphKey)
@@ -105,7 +105,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
             const params = {
               v1: answer[0][0],
               v2: answer[0][1],
-              type: 'colour',
+              type: 'overlay',
               highlight: false
             }
             triggerGraphAction('highlightEdge', params, event.detail.graphKey)
@@ -128,7 +128,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
           const params = {
             v1: e[0],
             v2: e[1],
-            type: 'colour',
+            type: 'overlay',
             highlight: false
           }
           triggerGraphAction('highlightEdge', params, event.detail.graphKey)
@@ -143,7 +143,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
             const params = {
               v1: m[0],
               v2: m[1],
-              type: 'colour',
+              type: 'overlay',
               highlight: true
             }
             triggerGraphAction('highlightEdge', params, event.detail.graphKey)
@@ -168,7 +168,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         const params = {
           v1: u,
           v2: v,
-          type: 'colour',
+          type: 'overlay',
           highlight: true
         }
         triggerGraphAction('highlightEdge', params, 0)
@@ -195,7 +195,7 @@ export function DisabledAnswer ({ question, answer, progress }) {
         const params = {
           v1: u,
           v2: v,
-          type: 'colour',
+          type: 'overlay',
           highlight: true
         }
         triggerGraphAction('highlightEdge', params, 0)

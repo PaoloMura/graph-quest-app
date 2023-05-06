@@ -36,7 +36,7 @@ export function onReset (question, answer) {
   answer.forEach(vertex => {
     const params = {
       vertex,
-      type: 'colour',
+      type: 'overlay',
       highlight: false
     }
     triggerGraphAction('highlightVertex', params, 0)
@@ -51,7 +51,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         setAnswer(answer.filter(v => v !== vertex))
         const params = {
           vertex,
-          type: 'colour',
+          type: 'overlay',
           highlight: false
         }
         triggerGraphAction('highlightVertex', params, event.detail.graphKey)
@@ -60,14 +60,14 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         if (limit === -1 || limit === 1 || answer.length < limit) {
           let params = {
             vertex,
-            type: 'colour',
+            type: 'overlay',
             highlight: true
           }
           triggerGraphAction('highlightVertex', params, event.detail.graphKey)
           if (limit === 1 && answer.length === 1) {
             params = {
               vertex: answer[0],
-              type: 'colour',
+              type: 'overlay',
               highlight: false
             }
             triggerGraphAction('highlightVertex', params, event.detail.graphKey)
@@ -87,7 +87,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
         for (const n of nodes) {
           const params = {
             vertex: n,
-            type: 'colour',
+            type: 'overlay',
             highlight: false
           }
           triggerGraphAction('highlightVertex', params, event.detail.graphKey)
@@ -101,7 +101,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
           for (const n of nodes) {
             const params = {
               vertex: n,
-              type: 'colour',
+              type: 'overlay',
               highlight: true
             }
             triggerGraphAction('highlightVertex', params, event.detail.graphKey)
@@ -125,7 +125,7 @@ export function Answer ({ question, answer, progress, setAnswer, setError }) {
       progress.answer.forEach(vertex => {
         const params = {
           vertex,
-          type: 'colour',
+          type: 'overlay',
           highlight: true
         }
         triggerGraphAction('highlightVertex', params, 0)
@@ -148,7 +148,7 @@ export function DisabledAnswer ({ question, answer, progress }) {
       progress.answer.forEach(vertex => {
         const params = {
           vertex,
-          type: 'colour',
+          type: 'overlay',
           highlight: true
         }
         triggerGraphAction('highlightVertex', params, 0)

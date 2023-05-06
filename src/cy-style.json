@@ -10,7 +10,6 @@
   {
     "selector": "node.ring",
     "style": {
-      "background-color": "#fff",
       "border-style": "solid",
       "border-width": 5,
       "text-valign": "center",
@@ -50,6 +49,18 @@
     "style": {
       "font-style": "italic",
       "font-family": "serif"
+    }
+  },
+  {
+    "selector": "node:active",
+    "style": {
+      "overlay-shape": "ellipse"
+    }
+  },
+  {
+    "selector": "node.colour",
+    "style": {
+      "background-color": "data(colour)"
     }
   },
   {
@@ -96,31 +107,21 @@
     }
   },
   {
-    "selector": "node.colour",
-    "style": {
-      "background-color": "#c00",
-      "width": 40,
-      "height": 40
-    }
-  },
-  {
-    "selector": "node:active",
-    "style": {
-      "overlay-shape": "ellipse"
-    }
-  },
-  {
     "selector": ".underlay",
     "style": {
       "underlay-opacity": 0.3,
       "underlay-color": "#00f",
-      "underlay-padding": 10
+      "underlay-padding": 12,
+      "underlay-shape": "ellipse"
     }
   },
   {
-    "selector": "node.underlay",
+    "selector": ".overlay",
     "style": {
-      "underlay-shape": "ellipse"
+      "overlay-opacity": 0.3,
+      "overlay-color": "#f00",
+      "overlay-padding": 10,
+      "overlay-shape": "ellipse"
     }
   }
 ]

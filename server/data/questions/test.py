@@ -266,22 +266,23 @@ def generate_graph(n):
     return graph, result
 
 
-class TestData(QTextInput):
+class TestData(QSelectPath):
     def __init__(self):
         super().__init__(layout='force-directed',
                          labels=False,
                          feedback=True)
 
-    def generate_data(self) -> list[nx.Graph]:
+    def generate_data(self) -> nx.Graph:
         # graph = nx.random_tree(10)
         # graph = nx.gn_graph(8)
         graph = random_planar_graph(6, True, 1)
         # graph = nx.gnp_random_graph(8, 0.3)
         for node in graph.nodes:
+            graph.nodes[node]['colour'] = random.choice(['#2f3', '#8e3', '#2cb', '#197'])
             graph.nodes[node]['data'] = str(node)
         for u, v in graph.edges:
             graph[u][v]['weight'] = random.randint(1, 10)
-        return [graph]
+        return graph
 
         # n = random.randint(4, 5)
         # p = random.choice(range(n - 2, n))
@@ -292,14 +293,14 @@ class TestData(QTextInput):
         #
         # return [graph]
 
-    def generate_question(self, graphs: list[nx.Graph]) -> str:
+    def generate_question(self, graph: nx.Graph) -> str:
         return 'This is a test for node data.'
 
-    def generate_solutions(self, graphs: list[nx.Graph]) -> list[str]:
+    def generate_solutions(self, graph: nx.Graph) -> list[str]:
         return ['']
 
-    def generate_feedback(self, graphs: list[nx.Graph], answer: str) -> (bool, str):
-        self.highlighted_nodes = list(graphs[0].nodes)
+    def generate_feedback(self, graph: nx.Graph, answer: str) -> (bool, str):
+        self.highlighted_nodes = list(graph.nodes)
         return True, ''
 
 
