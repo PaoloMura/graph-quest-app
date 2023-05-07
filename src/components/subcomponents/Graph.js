@@ -121,7 +121,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
             label: data[i],
             value: node.data('value')
           }
-          if (node.data('colour') !== null) {
+          if (node.data('colour') !== undefined) {
             childData.colour = node.data('colour')
           }
           const childNode = cy.add({
@@ -139,7 +139,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
         }
       }
       const c = node.data('colour')
-      if (c !== null) node.addClass('colour')
+      if (c !== undefined) node.addClass('colour')
     }
   }
 
@@ -168,6 +168,12 @@ function Graph ({ myKey, settings, user_settings, data }) {
   }
 
   const memoizedInitialiseLabels = useCallback(initialiseLabels, [cy, user_settings])
+
+  const triggerLayout = useCallback(() => {
+    const layout = cy.layout(layoutOptions)
+    layout.start()
+    memoizedInitialiseLabels()
+  }, [cy, layoutOptions, memoizedInitialiseLabels])
 
   // Initial graph setup (order matters!).
   function initialise (data) {
@@ -201,8 +207,7 @@ function Graph ({ myKey, settings, user_settings, data }) {
     }
 
     // Start the layout algorithm.
-    const layout = cy.layout(layoutOptions)
-    layout.start()
+    triggerLayout()
 
     // Apply interactive settings.
     cy.autoungrabify(true)
@@ -222,7 +227,8 @@ function Graph ({ myKey, settings, user_settings, data }) {
       .update()
 
     // Set node label positions.
-    initialiseLabels()
+    // initialiseLabels()
+    // setTimeout(() => initialiseLabels(), 1000)
 
     // Apply styling to nodes and edges.
     setEdgeClasses()
@@ -333,6 +339,43 @@ function Graph ({ myKey, settings, user_settings, data }) {
       }
     }
 
+    function getNextNodeID () {
+      // TODO: find and return the next best ID for a node
+      const nodes = cy.nodes()
+        .map(node => parseInt(node.data('id')))
+        .sort((x, y) => x - y)
+      let cur = 0
+      for (const n of nodes) {
+        if (n === cur) cur++
+        else break
+      }
+      return cur.toString()
+    }
+
+    function addNode (event) {
+      if (event.detail.graphKey !== myKey) return
+      const id = getNextNodeID()
+      const newNode = cy.add({
+        group: 'nodes',
+        data: {
+          id,
+          label: user_settings.node_prefix + id,
+          value: parseInt(id)
+        },
+        position: {
+          x: event.detail.x,
+          y: event.detail.y
+        }
+      })
+      if (user_settings.labels) newNode.addClass('label')
+      if (user_settings.label_style === 'math') newNode.addClass('styled-label')
+      triggerLayout()
+    }
+
+    function removeNode (event) {
+      cy.remove(`[id = "${event.detail.node}"]`)
+    }
+
     function handleResize () {
       const width = window.innerWidth
       let padding
@@ -350,6 +393,8 @@ function Graph ({ myKey, settings, user_settings, data }) {
     // Subscribe to action events
     document.addEventListener('highlightVertex', highlightVertex)
     document.addEventListener('highlightEdge', highlightEdge)
+    document.addEventListener('addNode', addNode)
+    document.addEventListener('removeNode', removeNode)
     window.addEventListener('resize', handleResize)
 
     return () => {
@@ -357,9 +402,11 @@ function Graph ({ myKey, settings, user_settings, data }) {
       cy.removeAllListeners()
       document.removeEventListener('highlightVertex', highlightVertex)
       document.removeEventListener('highlightEdge', highlightEdge)
+      document.removeEventListener('addNode', addNode)
+      document.removeEventListener('removeNode', removeNode)
       window.removeEventListener('resize', handleResize)
     }
-  }, [cy, data.directed, myKey, settings, memoizedInitialiseLabels])
+  }, [cy, data.directed, myKey, settings, user_settings, memoizedInitialiseLabels, triggerLayout])
 
   return (
     <>

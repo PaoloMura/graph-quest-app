@@ -11,8 +11,7 @@
     "avoidOverlap": true,
     "nodeDimensionsIncludeLabels": true,
     "handleDisconnected": true,
-    "randomize": false,
-    "allConstIter": 1000
+    "randomize": false
   },
   "circle": {
     "name": "circle",

@@ -23,5 +23,10 @@
     "selectNodes": false,
     "selectEdges": false,
     "boxSelection": false
+  },
+  "QEditGraph": {
+    "selectNodes": true,
+    "selectEdges": true,
+    "boxSelection": true
   }
 }

@@ -200,5 +200,5 @@ $ source venv/bin/activate
 2. Install the latest version of GraphQuest, replacing the version number:
 
 ```shell
-$ pip install -i https://test.pypi.org/simple/ graphquest==1.0.2 
+$ pip install -i https://test.pypi.org/simple/ graphquest==1.0.7 
 ```

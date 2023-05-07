@@ -3,7 +3,7 @@ A graph event is an event that is triggered by the graph, usually in response to
 A graph action is an event that the graph listens and responds to (e.g. highlight a given vertex).
 
 Supported Graph Evegnts:
-tap_bg (x: int, y: int, graphKey: int)
+tap_bg (x: float, y: float, graphKey: int)
 tap_node (vertex: int, graphKey: int)
 tap_edge (source: int, target: int, graphKey: int)
 cxttap_bg (x: int, y: int, graphKey: int)
@@ -21,6 +21,11 @@ highlightEdge (v1: int,
                type: 'underlay' | 'overlay',
                highlight: bool,
                graphKey: int)
+addNode (x: float,
+         y: float,
+         graphKey: int)
+removeNode (node: int,
+            graphKey: int)
  */
 
 export function triggerGraphEvent (name, value, graphKey) {

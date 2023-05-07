@@ -304,8 +304,21 @@ class TestData(QSelectPath):
         return True, ''
 
 
-# class TestEditGraph(QEditGraph):
-#     pass
+class TestEditGraph(QEditGraph):
+    def __init__(self):
+        super().__init__()
+
+    def generate_data(self) -> nx.Graph:
+        return nx.gnp_random_graph(4, 0.5)
+
+    def generate_question(self, graph: nx.Graph) -> str:
+        return 'This is a test for QEditGraph.'
+
+    def generate_solutions(self, graph: nx.Graph) -> list[nx.Graph]:
+        return []
+
+    def generate_feedback(self, graph: nx.Graph, answer: nx.Graph) -> (bool, str):
+        return True, ''
 
 
 if __name__ == '__main__':
