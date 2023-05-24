@@ -8,5 +8,7 @@ Find the `graphquest` documentation at https://graphquest.readthedocs.io/en/late
 
 See the README under `server/` for detailed installation and deployment instructions.
 
+See `Paolo-Thesis.pdf` for my dissertation PDF.
+
 Title font designed using "Rise of Kingdom" by Vladimir Nikolic, 
 accessed at: https://www.fontspace.com/rise-of-kingdom-font-f27732.
